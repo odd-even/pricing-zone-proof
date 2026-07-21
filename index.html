@@ -192,10 +192,9 @@
     <div class="stat pass"><div class="num">10/10</div><div class="lbl">Combos first &amp; last</div></div>
     <div class="stat pass"><div class="num">10/10</div><div class="lbl">Annuals + Perennials</div></div>
     <div class="stat pass"><div class="num">10/10</div><div class="lbl">Tag pricing</div></div>
-    <div class="stat fail"><div class="num">5</div><div class="lbl">Freight fails</div></div>
     <div class="stat fail"><div class="num">3</div><div class="lbl">Data errors</div></div>
-    <div class="stat warn"><div class="num">7</div><div class="lbl">To confirm</div></div>
-    <div class="stat pass"><div class="num">2</div><div class="lbl">Resolved via 2026</div></div>
+    <div class="stat warn"><div class="num">6</div><div class="lbl">To confirm</div></div>
+    <div class="stat pass"><div class="num">5</div><div class="lbl">Resolved via 2026</div></div>
   </div>
 
   <div class="card">
@@ -219,34 +218,17 @@
 
   <h2 class="section">Edits needed <span class="section-count" data-count-for="edits"></span></h2>
   <div class="fixes" data-review-group="edits">
-    <div class="fix">
-      <h3><span class="zonetag">ZONES C&middot;D&middot;E</span> Freight boxes are empty</h3>
-      <p>The Small Shipments pricing boxes on the Shipping Information page have no dollar amounts. Fill from ws 2027:</p>
-      <div class="vals">
-        C &nbsp;<span class="exp">$72 / $37 / $18</span> &nbsp;(1 / 2 / 3 boxes)<br>
-        D &nbsp;<span class="exp">$79 / $33 / $22</span><br>
-        E &nbsp;<span class="exp">$120 / $90 / $50</span>
-      </div>
-    </div>
-    <div class="fix">
-      <h3><span class="zonetag">ZONE 5</span> Rack minimum wrong</h3>
-      <p>Racked-order discount block doesn't match the freight sheet.</p>
-      <div class="vals">
-        PDF says <span class="got">2 racks</span> &nbsp;&rarr;&nbsp; should be <span class="exp">3 racks</span><br>
-        Box charges ($31/$21/$13) are correct.
-      </div>
-    </div>
-    <div class="fix">
-      <h3><span class="zonetag">ZONE 6</span> Rack minimum wrong</h3>
-      <p>Looks swapped with Zone 5.</p>
-      <div class="vals">
-        PDF says <span class="got">3 racks</span> &nbsp;&rarr;&nbsp; should be <span class="exp">2 racks</span><br>
-        Box charges ($49/$31/$21) are correct.
-      </div>
+    <div class="fix okfix">
+      <h3><span class="zonetag">RESOLVED</span> Zones C&middot;D&middot;E freight boxes &mdash; not published, same as 2026</h3>
+      <p>The 2026 catalogs for C, D and E also had no box-shipment rates on the Shipping Information page (no Box Shipments section, zero dollar amounts) &mdash; the omission is the established design for those zones, not a missed fill. The ws&nbsp;2027 sheet does list C/D/E rates ($72/$37/$18, $79/$33/$22, $120/$90/$50) if Samuel ever wants them printed.</p>
     </div>
     <div class="fix warnfix">
-      <h3><span class="zonetag">ZONES 4&middot;5&middot;6</span> 12&quot; Bowl repeats $69.98</h3>
-      <p>Combo accessories should repeat last year's pricing. The 12&quot; Bowl shows the same $69.98 on zones 4, 5 and 6 while every other accessory steps up by zone &mdash; confirm against last year before signing off.</p>
+      <h3><span class="zonetag">ZONES 5&middot;6</span> Rack minimums &mdash; PDF matches 2026, ws 2027 sheet disagrees</h3>
+      <p>Zone 5 PDF says <b>2 racks</b> and Zone 6 says <b>3 racks</b> &mdash; <b>identical to the 2026 catalogs</b>. The ws&nbsp;2027 freight sheet says the opposite (3 for Zone&nbsp;5, 2 for Zone&nbsp;6). So either the sheet has them swapped, or the minimums really changed and the PDFs are carrying stale 2026 text. Ask which source is right; box charges match the sheet everywhere.</p>
+    </div>
+    <div class="fix okfix">
+      <h3><span class="zonetag">RESOLVED</span> Combo accessories = 2026 exactly, including the $69.98 Bowl</h3>
+      <p>Every accessory price in every zone is identical to the 2026 catalogs (Zone 2: $54.36 / $58.86 / $59.98 / $73.22 / $74.75 &hellip; Zone E: $138.17 / $152.07 / $151.97 / $171.32 / $173.37). The 12&quot; Bowl's flat $69.98 across zones 4/5/6 was in the 2026 books too &mdash; "repeat last year's pricing" was executed correctly.</p>
     </div>
   </div>
 
@@ -268,9 +250,9 @@
       <h3><span class="zonetag">ALL ZONES</span> EOD math changed vs 2026 &mdash; wording now overstates it</h3>
       <p>2027 builds regular price as <b>EOD &times; 1.1</b>, which makes the discount 9.09% off regular. <b>2026 was a true 10%</b> (EOD = regular &times; 0.9, exact across 5,675 rows). The numbers are self-consistent, but the Discounts page still says "billed at 10% off the regular price" &mdash; that was literally true last year and isn't now.</p>
     </div>
-    <div class="fix warnfix">
-      <h3><span class="zonetag">ALL ZONES</span> Discounts-page sample table shows Zone E prices</h3>
-      <p>The miniature example price list on the Discounts Explained page (Ageratum Kona $0.900&hellip;) is <b>identical in all 10 PDFs and uses Zone E numbers</b> &mdash; the page's hidden slug even says "Changes between every zone." A US Zone 2 grower reading the example sees prices 2.6&times; their real ones. Confirm whether the sample is meant to be zone-live or generic.</p>
+    <div class="fix okfix">
+      <h3><span class="zonetag">RESOLVED</span> Discounts-page sample table &mdash; static by design</h3>
+      <p>The 2026 catalogs did the same thing: one example item (Ageratum Aloha Blue, Zone&nbsp;E-level numbers) identical in all 10 PDFs. The sample is a static illustration of how to read the table, not live zone data. 2027 continues the pattern with Ageratum Kona.</p>
     </div>
     <div class="fix warnfix">
       <h3><span class="zonetag">ALL ZONES</span> Cilantro &amp; Cosmos Sensation escalate like no other item</h3>
@@ -364,15 +346,16 @@
         <tr><td>2</td><td>$16</td><td>$10</td><td>$7</td><td class="pass-txt">PASS</td><td class="pass-txt">PASS &mdash; 1 rack &middot; $100 / $110</td></tr>
         <tr><td>3</td><td>$17</td><td>$8</td><td>$4</td><td class="pass-txt">PASS</td><td class="pass-txt">PASS &mdash; 2 racks &middot; $100</td></tr>
         <tr><td>4</td><td>$21</td><td>$12</td><td>$7</td><td class="pass-txt">PASS</td><td class="pass-txt">PASS &mdash; 2 racks &middot; $100</td></tr>
-        <tr class="bad"><td>5</td><td>$31</td><td>$21</td><td>$13</td><td class="pass-txt">PASS</td><td class="fail-txt">FAIL &mdash; PDF 2 racks, ref 3</td></tr>
-        <tr class="bad"><td>6</td><td>$49</td><td>$31</td><td>$21</td><td class="pass-txt">PASS</td><td class="fail-txt">FAIL &mdash; PDF 3 racks, ref 2</td></tr>
+        <tr class="watch"><td>5</td><td>$31</td><td>$21</td><td>$13</td><td class="pass-txt">PASS</td><td class="warn-txt">CONFIRM &mdash; PDF 2 racks (= 2026), ws sheet says 3</td></tr>
+        <tr class="watch"><td>6</td><td>$49</td><td>$31</td><td>$21</td><td class="pass-txt">PASS</td><td class="warn-txt">CONFIRM &mdash; PDF 3 racks (= 2026), ws sheet says 2</td></tr>
         <tr><td>A</td><td>$26</td><td>$21</td><td>$8</td><td class="pass-txt">PASS</td><td>N/A &mdash; no truck discounts</td></tr>
         <tr><td>B</td><td>$36</td><td>$34</td><td>$9</td><td class="pass-txt">PASS</td><td class="pass-txt">PASS &mdash; 3 racks &middot; $200 + $100</td></tr>
-        <tr class="bad"><td>C</td><td colspan="3"><i>empty &mdash; expected $72 / $37 / $18</i></td><td class="fail-txt">FAIL</td><td class="fail-txt">FAIL &mdash; missing</td></tr>
-        <tr class="bad"><td>D</td><td colspan="3"><i>empty &mdash; expected $79 / $33 / $22</i></td><td class="fail-txt">FAIL</td><td class="fail-txt">FAIL &mdash; missing</td></tr>
-        <tr class="bad"><td>E</td><td colspan="3"><i>empty &mdash; expected $120 / $90 / $50</i></td><td class="fail-txt">FAIL</td><td class="fail-txt">FAIL &mdash; missing</td></tr>
+        <tr><td>C</td><td colspan="3"><i>not published &mdash; same as 2026 (ws sheet: $72 / $37 / $18)</i></td><td class="pass-txt">BY DESIGN</td><td class="pass-txt">BY DESIGN</td></tr>
+        <tr><td>D</td><td colspan="3"><i>not published &mdash; same as 2026 (ws sheet: $79 / $33 / $22)</i></td><td class="pass-txt">BY DESIGN</td><td class="pass-txt">BY DESIGN</td></tr>
+        <tr><td>E</td><td colspan="3"><i>not published &mdash; same as 2026 (ws sheet: $120 / $90 / $50)</i></td><td class="pass-txt">BY DESIGN</td><td class="pass-txt">BY DESIGN</td></tr>
       </tbody>
     </table>
+    <p style="margin:10px 2px 0; color:var(--muted); font-size:13px;">2026 box rates for comparison: Z2 $10/$6/$4 &middot; Z3 $9/$4/$3 &middot; Z4 $14/$9/$6 &middot; Z5 $23/$11/$9 &middot; Z6 $30/$17/$10 &middot; ZA $21/$11/$7 &middot; ZB $33/$21/$6 &mdash; every zone's 2027 rates rose and match the ws sheet.</p>
   </div>
 
   <h2 class="section">Combo accessories by zone</h2>
@@ -382,9 +365,9 @@
       <tbody>
         <tr><td>2</td><td>$58.86</td><td>$59.98</td><td>$73.22</td><td>$74.75</td></tr>
         <tr><td>3</td><td>$60.86</td><td>$64.98</td><td>$75.22</td><td>$76.75</td></tr>
-        <tr class="watch"><td>4</td><td>$63.86</td><td class="warn-txt">$69.98</td><td>$78.22</td><td>$79.75</td></tr>
-        <tr class="watch"><td>5</td><td>$66.86</td><td class="warn-txt">$69.98</td><td>$81.22</td><td>$82.75</td></tr>
-        <tr class="watch"><td>6</td><td>$73.86</td><td class="warn-txt">$69.98</td><td>$88.22</td><td>$89.75</td></tr>
+        <tr><td>4</td><td>$63.86</td><td>$69.98</td><td>$78.22</td><td>$79.75</td></tr>
+        <tr><td>5</td><td>$66.86</td><td>$69.98</td><td>$81.22</td><td>$82.75</td></tr>
+        <tr><td>6</td><td>$73.86</td><td>$69.98</td><td>$88.22</td><td>$89.75</td></tr>
         <tr><td>A</td><td>$82.07</td><td>$81.97</td><td>$101.32</td><td>$103.37</td></tr>
         <tr><td>B</td><td>$102.07</td><td>$101.97</td><td>$121.32</td><td>$123.37</td></tr>
         <tr><td>C</td><td>$122.07</td><td>$121.97</td><td>$141.32</td><td>$143.37</td></tr>
@@ -392,6 +375,7 @@
         <tr><td>E</td><td>$152.07</td><td>$151.97</td><td>$171.32</td><td>$173.37</td></tr>
       </tbody>
     </table>
+    <p style="margin:10px 2px 0; color:var(--muted); font-size:13px;">Verified against the 2026 catalogs: every accessory price in every zone repeats last year exactly, including the flat $69.98 Bowl on zones 4/5/6.</p>
   </div>
 
   <h2 class="section">Zone 2 &amp; Zone A deep proof</h2>
@@ -411,7 +395,8 @@
   </div>
 
   <footer>
-    <b>Tag pricing:</b> $0.055 USD on zones 2&ndash;6, $0.075 CAD on zones A&ndash;E &mdash; matches Samuel.<br>
+    <b>Tag pricing:</b> $0.055 USD on zones 2&ndash;6, $0.075 CAD on zones A&ndash;E &mdash; matches Samuel. (2026 was $0.055 US / $0.074 CA, so only the CAD tag moved.)<br>
+    <b>Dates roll-forward:</b> all EOD deadlines, volume-period dates, and the pre-payment deadline correctly advanced one year from the 2026 catalogs.<br>
     <b>Note:</b> discounts/shipping pages still carry invisible white "Live Data Here / USA ONLY" slug text in the PDF text layer &mdash; harmless for print, worth cleaning in the masters eventually.<br>
     Sources: Proof/Finished PDF (GR1 ZONE *_R2) &middot; X3 Pricing Artroom export Update R3.xlsx &middot; ws 2027.pdf
   </footer>
@@ -432,9 +417,9 @@
     { label: "Annuals first & last lines", sub: "Ageratum Kona → Zinnia Zydeco", cells: "pppppppppp" },
     { label: "Perennials first & last lines", sub: "Achillea Skysail → Vinca minor", cells: "pppppppppp" },
     { label: "Tag pricing", sub: "$0.055 US / $0.075 CA", cells: "pppppppppp" },
-    { label: "Accessories prices", sub: "repeat last year — confirm", cells: "wwwwwwwwww" },
-    { label: "Freight: small shipment boxes", sub: "shipping information page", cells: "pppppppfff" },
-    { label: "Freight: rack discounts", sub: "vs ws 2027 sheet", cells: "pppffnpfff" },
+    { label: "Accessories prices", sub: "verified = 2026 exactly, all zones", cells: "pppppppppp" },
+    { label: "Freight: small shipment boxes", sub: "C/D/E have none — same as 2026", cells: "pppppppppp" },
+    { label: "Freight: rack discounts", sub: "PDF = 2026; ws 2027 sheet disagrees on 5 & 6", cells: "pppwwnpnnn" },
     { label: "Cover / Discounts / T&C / Truck", sub: "deep proof", cells: "pnnnnpnnnn" }
   ];
   var MARK = { p: ["pass", "\u2713"], f: ["fail", "\u2715"], w: ["warn", "!"], n: ["na", "\u2013"] };
