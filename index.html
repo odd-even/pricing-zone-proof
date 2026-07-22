@@ -171,7 +171,23 @@
   .script-panel-head .sub {
     margin: 4px 0 0; font-size: 12px; color: var(--text-secondary); line-height: 1.4;
   }
-  .script-panel-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .script-panel-actions { display: flex; gap: 8px; flex-shrink: 0; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .script-file-tabs {
+    display: inline-flex; gap: 3px;
+    padding: 3px; margin: 0;
+    background: var(--card); border: 1px solid var(--separator);
+    border-radius: 10px;
+  }
+  .script-file-tab {
+    font: inherit; font-size: 12px; font-weight: 700;
+    padding: 6px 12px; border-radius: 8px; border: none;
+    background: transparent; color: var(--text-secondary); cursor: pointer;
+  }
+  .script-file-tab:hover { color: var(--text); }
+  .script-file-tab.active {
+    background: var(--text); color: var(--bg);
+  }
+  html.dark .script-file-tab.active { background: #fff; color: #000; }
   .script-code-wrap {
     flex: 1; min-height: 0; overflow: auto;
     background: #0d0d0f;
@@ -754,10 +770,14 @@ html.dark .data-table.heat .chg-up2 { color: #ffcc66; }
           </svg>
           <div>
             <h2 id="scriptModalTitle">Apply Cell Style Pattern.jsx</h2>
-            <p class="sub">InDesign Scripts panel &middot; keep Cell Style Presets.json beside it</p>
+            <p class="sub" id="scriptModalSub">InDesign Scripts panel &middot; keep Cell Style Presets.json beside it</p>
           </div>
         </div>
         <div class="script-panel-actions">
+          <div class="script-file-tabs" role="tablist" aria-label="File">
+            <button type="button" class="script-file-tab active" role="tab" data-file="jsx" aria-selected="true">.jsx</button>
+            <button type="button" class="script-file-tab" role="tab" data-file="json" aria-selected="false">.json</button>
+          </div>
           <button type="button" class="hdr-btn primary" id="copyScriptBtn">Copy script</button>
           <button type="button" class="hdr-btn" id="closeScriptBtn">Close</button>
         </div>
@@ -1780,83 +1800,140 @@ html.dark .data-table.heat .chg-up2 { color: #ffcc66; }
 
 /* ===== InDesign script viewer ===== */
 (function () {
-  var SCRIPT_URLS = [
-    "Apply-Cell-Style-Pattern.jsx",
-    "Apply%20Cell%20Style%20Pattern.jsx",
-    "Apply Cell Style Pattern.jsx"
-  ];
+  var FILES = {
+    jsx: {
+      title: "Apply Cell Style Pattern.jsx",
+      sub: "InDesign Scripts panel \u00b7 keep Cell Style Presets.json beside it",
+      copyLabel: "Copy script",
+      urls: [
+        "Apply-Cell-Style-Pattern.jsx",
+        "Apply%20Cell%20Style%20Pattern.jsx",
+        "Apply Cell Style Pattern.jsx"
+      ]
+    },
+    json: {
+      title: "Cell Style Presets.json",
+      sub: "Preset assignments used by the script \u00b7 keep beside the .jsx",
+      copyLabel: "Copy JSON",
+      urls: [
+        "Cell-Style-Presets.json",
+        "Cell%20Style%20Presets.json",
+        "Cell Style Presets.json"
+      ]
+    }
+  };
   var modal = document.getElementById("scriptModal");
   var codeEl = document.getElementById("scriptCode");
   var statusEl = document.getElementById("scriptStatus");
+  var titleEl = document.getElementById("scriptModalTitle");
+  var subEl = document.getElementById("scriptModalSub");
   var copyBtn = document.getElementById("copyScriptBtn");
   var openBtn = document.getElementById("viewScriptBtn");
   var closeBtn = document.getElementById("closeScriptBtn");
-  var scriptText = "";
-  var loading = null;
+  var tabs = Array.prototype.slice.call(document.querySelectorAll(".script-file-tab"));
+  var cache = { jsx: "", json: "" };
+  var loading = { jsx: null, json: null };
+  var active = "jsx";
 
   function setStatus(msg, ok) {
     statusEl.textContent = msg;
     statusEl.classList.toggle("ok", !!ok);
   }
 
+  function currentText() {
+    return cache[active] || "";
+  }
+
+  function showActive() {
+    var meta = FILES[active];
+    titleEl.textContent = meta.title;
+    subEl.textContent = meta.sub;
+    copyBtn.textContent = meta.copyLabel;
+    tabs.forEach(function (tab) {
+      var on = tab.getAttribute("data-file") === active;
+      tab.classList.toggle("active", on);
+      tab.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    if (cache[active]) {
+      codeEl.textContent = cache[active];
+      setStatus(cache[active].split("\n").length + " lines \u00b7 ready to copy", false);
+    } else {
+      codeEl.textContent = "Loading " + meta.title + "\u2026";
+      setStatus("Fetching " + meta.title + "\u2026", false);
+    }
+  }
+
+  function loadFile(kind) {
+    if (cache[kind]) {
+      if (kind === active) showActive();
+      return Promise.resolve(cache[kind]);
+    }
+    if (loading[kind]) return loading[kind];
+    var meta = FILES[kind];
+    loading[kind] = (async function () {
+      var lastErr = null;
+      for (var i = 0; i < meta.urls.length; i++) {
+        try {
+          var res = await fetch(meta.urls[i], { cache: "no-cache" });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          var text = await res.text();
+          if (kind === "json") {
+            try { text = JSON.stringify(JSON.parse(text), null, 2); } catch (e) {}
+          }
+          cache[kind] = text;
+          if (kind === active) showActive();
+          return text;
+        } catch (e) {
+          lastErr = e;
+        }
+      }
+      if (kind === active) {
+        codeEl.textContent = "Could not load " + meta.title + ".";
+        setStatus("Load failed" + (lastErr && lastErr.message ? ": " + lastErr.message : ""), false);
+      }
+      throw lastErr || new Error("Load failed");
+    })().finally(function () { loading[kind] = null; });
+    return loading[kind];
+  }
+
   function openModal() {
     modal.hidden = false;
     document.body.style.overflow = "hidden";
-    loadScript();
+    showActive();
+    loadFile(active);
   }
   function closeModal() {
     modal.hidden = true;
     document.body.style.overflow = "";
   }
 
-  function loadScript() {
-    if (scriptText) {
-      codeEl.textContent = scriptText;
-      setStatus(scriptText.split("\n").length + " lines \u00b7 ready to copy", false);
-      return;
-    }
-    if (loading) return;
-    codeEl.textContent = "Loading script\u2026";
-    setStatus("Fetching Apply Cell Style Pattern.jsx\u2026", false);
-    loading = (async function () {
-      var lastErr = null;
-      for (var i = 0; i < SCRIPT_URLS.length; i++) {
-        try {
-          var res = await fetch(SCRIPT_URLS[i], { cache: "no-cache" });
-          if (!res.ok) throw new Error("HTTP " + res.status);
-          scriptText = await res.text();
-          codeEl.textContent = scriptText;
-          setStatus(scriptText.split("\n").length + " lines \u00b7 ready to copy", false);
-          return;
-        } catch (e) {
-          lastErr = e;
-        }
-      }
-      codeEl.textContent = "Could not load the script file.";
-      setStatus("Load failed" + (lastErr && lastErr.message ? ": " + lastErr.message : ""), false);
-    })().finally(function () { loading = null; });
+  function setActive(kind) {
+    if (!FILES[kind] || kind === active) return;
+    active = kind;
+    showActive();
+    loadFile(kind);
   }
 
-  function copyScript() {
-    if (!scriptText) {
-      setStatus("Script is still loading\u2026", false);
+  function copyActive() {
+    var text = currentText();
+    if (!text) {
+      setStatus((active === "json" ? "JSON" : "Script") + " is still loading\u2026", false);
       return;
     }
+    var label = FILES[active].copyLabel;
     function done() {
       setStatus("Copied to clipboard", true);
       copyBtn.textContent = "Copied";
-      setTimeout(function () { copyBtn.textContent = "Copy script"; }, 1600);
+      setTimeout(function () { copyBtn.textContent = label; }, 1600);
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(scriptText).then(done).catch(function () {
-        fallbackCopy();
-      });
+      navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(); });
     } else {
       fallbackCopy();
     }
     function fallbackCopy() {
       var ta = document.createElement("textarea");
-      ta.value = scriptText;
+      ta.value = text;
       ta.setAttribute("readonly", "");
       ta.style.position = "fixed";
       ta.style.left = "-9999px";
@@ -1872,9 +1949,14 @@ html.dark .data-table.heat .chg-up2 { color: #ffcc66; }
     }
   }
 
+  tabs.forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      setActive(tab.getAttribute("data-file"));
+    });
+  });
   openBtn.addEventListener("click", openModal);
   closeBtn.addEventListener("click", closeModal);
-  copyBtn.addEventListener("click", copyScript);
+  copyBtn.addEventListener("click", copyActive);
   modal.addEventListener("click", function (e) {
     if (e.target === modal) closeModal();
   });
