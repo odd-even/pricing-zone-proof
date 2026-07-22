@@ -122,8 +122,8 @@
   html.dark .theme-toggle .icon-moon { display: block; }
 
   header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 8px; }
-  h1 { font-size: clamp(24px, 5vw, 34px); font-weight: 700; letter-spacing: 0.2px; }
-  .subtitle { color: var(--text-secondary); font-size: clamp(13px, 2.2vw, 15px); margin-top: 4px; }
+  h1 { font-size: clamp(24px, 4vw, 40px); font-weight: 700; letter-spacing: 0.2px; }
+  .subtitle { color: var(--text-secondary); font-size: clamp(13px, 1.6vw, 17px); margin-top: 4px; }
 
   .overall {
     display: flex; align-items: center; gap: 14px;
@@ -158,8 +158,8 @@
   th, td { padding: 0; }
 
   thead th {
-    padding: 16px clamp(2px, 1vw, 8px) 14px;
-    font-size: clamp(10px, 1.5vw, 12px);
+    padding: clamp(14px, 1.2vw, 22px) clamp(2px, 0.8vw, 10px) clamp(12px, 1vw, 16px);
+    font-size: clamp(10px, 1.1vw, 14px);
     font-weight: 600;
     color: var(--text-secondary);
     text-transform: uppercase;
@@ -169,22 +169,22 @@
     line-height: 1.45;
     vertical-align: bottom;
   }
-  thead th.task-col { text-align: left; padding-left: clamp(12px, 2.5vw, 20px); width: clamp(130px, 28vw, 270px); min-width: 120px; }
-  thead th.zone-head { min-width: 34px; }
-  thead th.progress-col { width: clamp(44px, 8vw, 74px); }
+  thead th.task-col { text-align: left; padding-left: clamp(12px, 2vw, 24px); width: clamp(130px, 18vw, 320px); min-width: 120px; }
+  thead th.zone-head { min-width: clamp(34px, 4vw, 72px); }
+  thead th.progress-col { width: clamp(44px, 6vw, 90px); }
 
   tbody tr { border-bottom: 1px solid var(--separator); transition: background 0.2s ease; }
   tbody tr:last-child { border-bottom: none; }
   tbody tr.task-done { background: var(--accent-soft); }
 
   .task-cell {
-    padding: 13px clamp(6px, 1.5vw, 12px) 13px clamp(10px, 2vw, 16px);
-    font-size: clamp(12px, 1.8vw, 15px);
+    padding: clamp(12px, 1vw, 16px) clamp(6px, 1.2vw, 14px) clamp(12px, 1vw, 16px) clamp(10px, 1.6vw, 18px);
+    font-size: clamp(12px, 1.3vw, 17px);
     font-weight: 550;
     line-height: 1.35;
     display: flex;
     align-items: center;
-    gap: clamp(6px, 1.2vw, 10px);
+    gap: clamp(6px, 1vw, 12px);
     /* Uniform row height: always tall enough for a two-line label. */
     min-height: calc(2.7em + 26px);
   }
@@ -255,9 +255,9 @@
     text-decoration: line-through;
     text-decoration-thickness: 1px;
   }
-  .zone-word { display: block; font-size: clamp(7px, 1.1vw, 9px); font-weight: 600; color: var(--text-secondary); letter-spacing: 1px; margin-bottom: 2px; }
-  .zone-label { display: block; font-size: clamp(17px, 3.4vw, 30px); font-weight: 800; color: var(--text); line-height: 1; letter-spacing: -0.5px; }
-  .zone-region { display: block; font-size: clamp(7px, 1.1vw, 9px); color: var(--text-secondary); margin-top: 4px; letter-spacing: 0.5px; }
+  .zone-word { display: block; font-size: clamp(7px, 0.85vw, 12px); font-weight: 600; color: var(--text-secondary); letter-spacing: 1px; margin-bottom: 2px; }
+  .zone-label { display: block; font-size: clamp(17px, 2.8vw, 48px); font-weight: 800; color: var(--text); line-height: 1; letter-spacing: -0.5px; }
+  .zone-region { display: block; font-size: clamp(7px, 0.85vw, 12px); color: var(--text-secondary); margin-top: 4px; letter-spacing: 0.5px; }
   .zone-label.usa, .zone-label.canada { color: var(--text); }
   .card { position: relative; }
   .region-box {
