@@ -1,0 +1,229 @@
+{
+  "presets": [
+    {
+      "name": "GR1 2026",
+      "assignments": {
+        "0": {
+          "type": "single",
+          "styleName": "Variety .92w",
+          "skip": 0,
+          "columnWidth": 66.24
+        },
+        "1": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "Tray .22w", "rowHeight": 13.4856 },
+            "2": { "styleName": "Tray EOD", "rowHeight": 13.4856 }
+          },
+          "columnWidth": 15.84
+        },
+        "2": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 18.936
+        },
+        "3": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 18.936
+        },
+        "4": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 18.936
+        },
+        "5": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 18.936
+        },
+        "6": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 18.936
+        }
+      },
+      "mergedConfig": {
+        "styleName": "Heading 0.4h",
+        "paragraphStyleName": "",
+        "rowHeight": 26.964
+      }
+    },
+    {
+      "name": "GR1 Combos",
+      "assignments": {
+        "0": {
+          "type": "single",
+          "styleName": "Combo Names",
+          "skip": 0,
+          "columnWidth": 100.8
+        },
+        "1": {
+          "type": "single",
+          "styleName": "Tray .22w",
+          "skip": 0,
+          "rowHeight": 14.4,
+          "columnWidth": 23.76
+        },
+        "2": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 29.448
+        },
+        "3": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 29.448
+        },
+        "4": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 29.448
+        },
+        "5": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 29.448
+        },
+        "6": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 29.448
+        }
+      },
+      "mergedConfig": {
+        "styleName": "Heading 0.4h",
+        "paragraphStyleName": "",
+        "rowHeight": 26.964
+      }
+    },
+    {
+      "name": "GR3 2025",
+      "assignments": {
+        "0": {
+          "type": "single",
+          "styleName": "Variety .92w",
+          "skip": 0,
+          "columnWidth": 66.24
+        },
+        "1": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "Tray .22w", "rowHeight": 14.4 },
+            "2": { "styleName": "Tray EOD", "rowHeight": 14.4 }
+          },
+          "columnWidth": 15.84
+        },
+        "2": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 18.936
+        },
+        "3": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 18.936
+        },
+        "4": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 18.936
+        },
+        "5": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 18.936
+        },
+        "6": {
+          "type": "pattern",
+          "cycle": 2,
+          "skip": 0,
+          "positions": {
+            "1": { "styleName": "$ top .2h .263w" },
+            "2": { "styleName": "$ eod .2h .263w" }
+          },
+          "columnWidth": 18.936
+        }
+      },
+      "mergedConfig": {
+        "styleName": "Heading 0.4h",
+        "paragraphStyleName": "",
+        "rowHeight": 28.8
+      }
+    }
+  ]
+}

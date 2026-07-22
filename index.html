@@ -47,6 +47,64 @@
 
   h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 800; letter-spacing: -0.6px; line-height: 1.1; }
   .subtitle { color: var(--text-secondary); font-size: clamp(13px, 1.9vw, 16px); margin-top: 8px; line-height: 1.45; }
+  header.page-head {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap;
+  }
+  header.page-head .page-head-text { min-width: 0; flex: 1; }
+  .header-actions { display: flex; flex-wrap: wrap; gap: 8px; flex-shrink: 0; }
+  .hdr-btn {
+    font: inherit; font-size: 13px; font-weight: 700;
+    padding: 9px 14px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--separator); background: var(--card); color: var(--text);
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .hdr-btn:hover { border-color: var(--text-secondary); }
+  .hdr-btn.primary { background: var(--text); color: var(--bg); border-color: transparent; }
+  @media (prefers-color-scheme: dark) {
+    .hdr-btn.primary { background: #fff; color: #000; }
+  }
+
+  .script-modal {
+    position: fixed; inset: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px; background: rgba(0,0,0,0.45);
+  }
+  .script-modal[hidden] { display: none; }
+  .script-panel {
+    width: min(960px, 100%);
+    max-height: min(88vh, 900px);
+    display: flex; flex-direction: column;
+    background: var(--card); border: 1px solid var(--separator);
+    border-radius: 18px; overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.28);
+  }
+  .script-panel-head {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+    padding: 16px 18px; border-bottom: 1px solid var(--separator); background: var(--card2);
+  }
+  .script-panel-head h2 {
+    font-size: 17px; font-weight: 800; letter-spacing: -0.3px; margin: 0;
+  }
+  .script-panel-head .sub {
+    margin: 4px 0 0; font-size: 12px; color: var(--text-secondary); line-height: 1.4;
+  }
+  .script-panel-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .script-code-wrap {
+    flex: 1; min-height: 0; overflow: auto;
+    background: #0d0d0f;
+  }
+  .script-code {
+    margin: 0; padding: 18px 20px 28px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px; line-height: 1.55; color: #e8e8ed;
+    white-space: pre; tab-size: 4;
+  }
+  .script-status {
+    padding: 10px 18px; border-top: 1px solid var(--separator);
+    font-size: 12px; color: var(--text-secondary); background: var(--card2);
+  }
+  .script-status.ok { color: var(--pass); font-weight: 700; }
 
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 22px 0; }
   .stat {
@@ -573,10 +631,34 @@
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <h1>2027 Pricing Zone Proof</h1>
-    <p class="subtitle">A visual check of the 2027 zone catalogs against the source price file, freight sheet, and last year&rsquo;s books.</p>
+  <header class="page-head">
+    <div class="page-head-text">
+      <h1>2027 Pricing Zone Proof</h1>
+      <p class="subtitle">A visual check of the 2027 zone catalogs against the source price file, freight sheet, and last year&rsquo;s books.</p>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="hdr-btn primary" id="viewScriptBtn">View InDesign script</button>
+    </div>
   </header>
+
+  <div class="script-modal" id="scriptModal" hidden>
+    <div class="script-panel" role="dialog" aria-modal="true" aria-labelledby="scriptModalTitle">
+      <div class="script-panel-head">
+        <div>
+          <h2 id="scriptModalTitle">Apply Cell Style Pattern.jsx</h2>
+          <p class="sub">InDesign Scripts panel &middot; keep Cell Style Presets.json beside it</p>
+        </div>
+        <div class="script-panel-actions">
+          <button type="button" class="hdr-btn primary" id="copyScriptBtn">Copy script</button>
+          <button type="button" class="hdr-btn" id="closeScriptBtn">Close</button>
+        </div>
+      </div>
+      <div class="script-code-wrap">
+        <pre class="script-code" id="scriptCode">Loading script&hellip;</pre>
+      </div>
+      <div class="script-status" id="scriptStatus">Fetching Apply Cell Style Pattern.jsx&hellip;</div>
+    </div>
+  </div>
 
   <div class="stats">
     <div class="stat pass"><div class="num">10/10</div><div class="lbl">Zone IDs correct</div></div>
@@ -1542,6 +1624,111 @@
 
   build(document.getElementById("yoyListDown"), document.getElementById("yoyCountDown"), DOWN, "down");
   build(document.getElementById("yoyListUp"), document.getElementById("yoyCountUp"), UP, "up");
+})();
+
+/* ===== InDesign script viewer ===== */
+(function () {
+  var SCRIPT_URLS = [
+    "Apply-Cell-Style-Pattern.jsx",
+    "Apply%20Cell%20Style%20Pattern.jsx",
+    "Apply Cell Style Pattern.jsx"
+  ];
+  var modal = document.getElementById("scriptModal");
+  var codeEl = document.getElementById("scriptCode");
+  var statusEl = document.getElementById("scriptStatus");
+  var copyBtn = document.getElementById("copyScriptBtn");
+  var openBtn = document.getElementById("viewScriptBtn");
+  var closeBtn = document.getElementById("closeScriptBtn");
+  var scriptText = "";
+  var loading = null;
+
+  function setStatus(msg, ok) {
+    statusEl.textContent = msg;
+    statusEl.classList.toggle("ok", !!ok);
+  }
+
+  function openModal() {
+    modal.hidden = false;
+    document.body.style.overflow = "hidden";
+    loadScript();
+  }
+  function closeModal() {
+    modal.hidden = true;
+    document.body.style.overflow = "";
+  }
+
+  function loadScript() {
+    if (scriptText) {
+      codeEl.textContent = scriptText;
+      setStatus(scriptText.split("\n").length + " lines \u00b7 ready to copy", false);
+      return;
+    }
+    if (loading) return;
+    codeEl.textContent = "Loading script\u2026";
+    setStatus("Fetching Apply Cell Style Pattern.jsx\u2026", false);
+    loading = (async function () {
+      var lastErr = null;
+      for (var i = 0; i < SCRIPT_URLS.length; i++) {
+        try {
+          var res = await fetch(SCRIPT_URLS[i], { cache: "no-cache" });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          scriptText = await res.text();
+          codeEl.textContent = scriptText;
+          setStatus(scriptText.split("\n").length + " lines \u00b7 ready to copy", false);
+          return;
+        } catch (e) {
+          lastErr = e;
+        }
+      }
+      codeEl.textContent = "Could not load the script file.";
+      setStatus("Load failed" + (lastErr && lastErr.message ? ": " + lastErr.message : ""), false);
+    })().finally(function () { loading = null; });
+  }
+
+  function copyScript() {
+    if (!scriptText) {
+      setStatus("Script is still loading\u2026", false);
+      return;
+    }
+    function done() {
+      setStatus("Copied to clipboard", true);
+      copyBtn.textContent = "Copied";
+      setTimeout(function () { copyBtn.textContent = "Copy script"; }, 1600);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(scriptText).then(done).catch(function () {
+        fallbackCopy();
+      });
+    } else {
+      fallbackCopy();
+    }
+    function fallbackCopy() {
+      var ta = document.createElement("textarea");
+      ta.value = scriptText;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+        done();
+      } catch (e) {
+        setStatus("Copy failed — select the text manually", false);
+      }
+      document.body.removeChild(ta);
+    }
+  }
+
+  openBtn.addEventListener("click", openModal);
+  closeBtn.addEventListener("click", closeModal);
+  copyBtn.addEventListener("click", copyScript);
+  modal.addEventListener("click", function (e) {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !modal.hidden) closeModal();
+  });
 })();
 </script>
 </body>
