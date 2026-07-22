@@ -1481,7 +1481,7 @@ html.dark .data-table.heat .chg-up2 { color: #ffcc66; }
       <div class="tag">Dashboard review tools</div>
       <h3>What you can mark</h3>
       <ul>
-        <li class="ok"><b>Anomaly cards</b> &mdash; Needs fix / OK as-is, plus named comments; synced live for the team</li>
+        <li class="ok"><b>Anomaly cards</b> &mdash; Flag for Review / Looks Good, plus named comments; synced live for the team</li>
         <li class="ok"><b>YoY mover rows</b> &mdash; ✓ deliberate / ✕ wrong; counter shows reviewed + flagged</li>
         <li class="ok"><b>Shared via Firebase</b> &mdash; same seamless sync as the checklist (no tokens)</li>
       </ul>
@@ -1944,10 +1944,10 @@ window.JF_PROOF_SYNC = (function () {
       bar.className = "review-bar";
       var btnFix = document.createElement("button");
       btnFix.className = "review-btn needsfix";
-      btnFix.textContent = "Needs fix";
+      btnFix.textContent = "Flag for Review";
       var btnOk = document.createElement("button");
       btnOk.className = "review-btn okasis";
-      btnOk.textContent = "OK as-is";
+      btnOk.textContent = "Looks Good";
       var authorWrap = document.createElement("div");
       authorWrap.className = "review-author";
       var authorLabel = document.createElement("span");
