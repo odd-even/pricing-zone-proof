@@ -156,6 +156,7 @@
     gap: 14px;
     margin-bottom: 22px;
   }
+  .fixes[hidden] { display: none; }
   .fix {
     border-radius: 16px; padding: 16px 18px; border: 1px solid var(--separator);
     background: var(--card); border-top: 4px solid var(--fail);
@@ -280,8 +281,89 @@
   .review-btn:hover { border-color: var(--text-secondary); }
   .review-btn.needsfix.on { background: var(--fail-soft); color: var(--fail); border-color: var(--fail); }
   .review-btn.okasis.on { background: var(--pass-soft); color: var(--pass); border-color: var(--pass); }
-  .fix.reviewed-ok { opacity: 0.55; border-top-color: var(--pass); }
+  .fix.reviewed-ok { border-top-color: var(--pass); }
   .fix.reviewed-fix { border-top-color: var(--fail); }
+
+  .resolved-drawer {
+    margin: -6px 0 28px;
+    border: 1px solid var(--separator);
+    border-radius: 16px;
+    background: var(--card);
+    overflow: hidden;
+  }
+  .resolved-drawer[hidden] { display: none; }
+  .resolved-drawer > summary {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 18px; cursor: pointer; list-style: none;
+    background: var(--pass-soft);
+    user-select: none;
+  }
+  .resolved-drawer > summary::-webkit-details-marker { display: none; }
+  .resolved-drawer > summary .rd-title {
+    font-size: 14px; font-weight: 800; color: var(--pass);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .resolved-drawer > summary .rd-count {
+    font-size: 12px; font-weight: 700;
+    background: var(--card); color: var(--pass);
+    border: 1px solid transparent;
+    padding: 3px 10px; border-radius: 999px;
+  }
+  .resolved-drawer > summary .rd-hint {
+    font-size: 12px; font-weight: 600; color: var(--text-secondary);
+  }
+  .resolved-drawer > summary .rd-chevron {
+    width: 8px; height: 8px;
+    border-right: 2px solid var(--pass);
+    border-bottom: 2px solid var(--pass);
+    transform: rotate(45deg);
+    transition: transform 0.15s;
+    flex-shrink: 0;
+  }
+  .resolved-drawer[open] > summary .rd-chevron {
+    transform: rotate(-135deg) translate(-2px, -2px);
+  }
+  .resolved-drawer .resolved-fixes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
+    gap: 14px;
+    padding: 4px 14px 16px;
+    border-top: 1px solid var(--separator);
+  }
+  .resolved-drawer .fix {
+    background: var(--card2);
+  }
+  .fix-fold {
+    border-radius: 16px; border: 1px solid var(--separator);
+    background: var(--card2); border-top: 4px solid var(--pass);
+    min-width: 0; overflow: hidden;
+  }
+  .fix-fold > summary {
+    list-style: none; cursor: pointer; padding: 14px 16px;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+    user-select: none;
+  }
+  .fix-fold > summary::-webkit-details-marker { display: none; }
+  .fix-fold > summary .fold-title {
+    font-size: clamp(14px, 1.8vw, 16px); font-weight: 800; line-height: 1.35;
+    letter-spacing: -0.2px; color: var(--text);
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  }
+  .fix-fold > summary .fold-chevron {
+    width: 7px; height: 7px; margin-top: 7px; flex-shrink: 0;
+    border-right: 2px solid var(--text-secondary);
+    border-bottom: 2px solid var(--text-secondary);
+    transform: rotate(45deg);
+    transition: transform 0.15s;
+  }
+  .fix-fold[open] > summary .fold-chevron {
+    transform: rotate(-135deg) translate(-1px, -1px);
+  }
+  .fix-fold .fix {
+    border: none; border-radius: 0; border-top: 1px solid var(--separator);
+    background: var(--card); margin: 0;
+  }
+  .fix-fold .fix h3 { display: none; }
   .section-count {
     font-size: 12px; font-weight: 700; color: var(--text-secondary);
     background: var(--card); border: 1px solid var(--separator);
@@ -1157,20 +1239,89 @@
   var groups = document.querySelectorAll("[data-review-group]");
   groups.forEach(function (group) {
     var groupId = group.getAttribute("data-review-group");
-    var cards = group.querySelectorAll(".fix");
+
+    var drawer = document.createElement("details");
+    drawer.className = "resolved-drawer";
+    drawer.innerHTML =
+      '<summary>' +
+        '<span class="rd-title">Resolved <span class="rd-count">0</span></span>' +
+        '<span class="rd-hint">Collapsed &mdash; open to review</span>' +
+        '<span class="rd-chevron" aria-hidden="true"></span>' +
+      "</summary>";
+    var resolvedGrid = document.createElement("div");
+    resolvedGrid.className = "resolved-fixes";
+    drawer.appendChild(resolvedGrid);
+    group.insertAdjacentElement("afterend", drawer);
+
+    function isDesignedResolved(card) {
+      return card.classList.contains("okfix");
+    }
+    function isResolved(card) {
+      return isDesignedResolved(card) || state[card.dataset.reviewId] === "ok";
+    }
+
+    function wrapFold(card) {
+      if (card.parentElement && card.parentElement.classList.contains("fix-fold")) {
+        return card.parentElement;
+      }
+      var fold = document.createElement("details");
+      fold.className = "fix-fold";
+      var sum = document.createElement("summary");
+      var title = document.createElement("div");
+      title.className = "fold-title";
+      var h3 = card.querySelector("h3");
+      if (h3) title.innerHTML = h3.innerHTML;
+      var chev = document.createElement("span");
+      chev.className = "fold-chevron";
+      chev.setAttribute("aria-hidden", "true");
+      sum.appendChild(title);
+      sum.appendChild(chev);
+      fold.appendChild(sum);
+      fold.appendChild(card);
+      return fold;
+    }
+
+    function unwrapFold(card) {
+      var fold = card.closest(".fix-fold");
+      if (!fold) return card;
+      fold.parentElement.insertBefore(card, fold);
+      fold.remove();
+      return card;
+    }
+
+    function placeCard(card) {
+      if (isResolved(card)) {
+        var fold = wrapFold(card);
+        if (fold.parentElement !== resolvedGrid) resolvedGrid.appendChild(fold);
+      } else {
+        unwrapFold(card);
+        if (card.parentElement !== group) group.appendChild(card);
+      }
+    }
+
+    function syncDrawer() {
+      var n = resolvedGrid.querySelectorAll(".fix").length;
+      drawer.querySelector(".rd-count").textContent = String(n);
+      drawer.hidden = n === 0;
+      if (n === 0) drawer.open = false;
+      group.hidden = group.querySelectorAll(".fix").length === 0;
+    }
 
     function updateCount() {
       var badge = document.querySelector('[data-count-for="' + groupId + '"]');
+      var all = Array.prototype.slice.call(group.querySelectorAll(".fix"));
+      Array.prototype.push.apply(all, Array.prototype.slice.call(resolvedGrid.querySelectorAll(".fix")));
       if (!badge) return;
       var done = 0;
-      cards.forEach(function (card) {
-        if (state[card.dataset.reviewId]) done++;
+      all.forEach(function (card) {
+        if (isDesignedResolved(card) || state[card.dataset.reviewId]) done++;
       });
-      badge.textContent = done + "/" + cards.length + " reviewed";
-      badge.classList.toggle("done", done === cards.length);
+      badge.textContent = done + "/" + all.length + " reviewed";
+      badge.classList.toggle("done", done === all.length);
     }
 
-    cards.forEach(function (card) {
+    var initialCards = Array.prototype.slice.call(group.querySelectorAll(":scope > .fix"));
+    initialCards.forEach(function (card) {
       var id = groupId + ":" + slug(card.querySelector("h3").textContent);
       card.dataset.reviewId = id;
 
@@ -1189,19 +1340,24 @@
       function render() {
         var v = state[id];
         btnFix.classList.toggle("on", v === "fix");
-        btnOk.classList.toggle("on", v === "ok");
+        btnOk.classList.toggle("on", v === "ok" || (isDesignedResolved(card) && !v));
         card.classList.toggle("reviewed-fix", v === "fix");
-        card.classList.toggle("reviewed-ok", v === "ok");
+        card.classList.toggle("reviewed-ok", v === "ok" || isDesignedResolved(card));
+        placeCard(card);
+        syncDrawer();
+        updateCount();
       }
       function set(v) {
         if (state[id] === v) { delete state[id]; } else { state[id] = v; }
-        save(); render(); updateCount();
+        save();
+        render();
       }
       btnFix.addEventListener("click", function () { set("fix"); });
       btnOk.addEventListener("click", function () { set("ok"); });
       render();
     });
 
+    syncDrawer();
     updateCount();
   });
 })();
