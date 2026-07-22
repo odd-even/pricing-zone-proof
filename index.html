@@ -374,7 +374,7 @@
     </div>
     <div class="fix okfix">
       <h3><span class="zonetag">RESOLVED</span> 256-tray pricing near 512 rates &mdash; intentional</h3>
-      <p>The 2026 files call this size <b>"Half-512"</b> &mdash; it's literally half a 512 tray with the same small plugs, so it's priced just above 512 per-plant rates. Same basis both years (Ageratum):</p>
+      <p>A <b>256</b> is a 512 tray cut in half manually near the end of its production cycle &mdash; same small plugs, half the count &mdash; so it prices just above 512 per-plant rates. The 2026 files labeled this size <b>"Half-512"</b>. Same basis both years (Ageratum):</p>
       <div class="vals">
         2026 &nbsp;&nbsp;512 = $0.103 &nbsp;&middot;&nbsp; Half-512 = $0.120<br>
         2027 &nbsp;&nbsp;512 = $0.103 &nbsp;&middot;&nbsp; 256 = $0.127
@@ -521,7 +521,7 @@
         <tr><td>No duplicate item+size rows</td><td class="pass-txt">PASS</td></tr>
         <tr><td>Raw SQL rows vs ArtRoom sheets (all 10 zones)</td><td class="pass-txt">PASS &mdash; every summarized ArtRoom price matches its source varieties; 0 conflicts inside "OK to Summarize" groups</td></tr>
         <tr><td>CK ArtRoom vs COMBOKITDATA</td><td class="pass-txt">PASS &mdash; 1,200 combo rows identical</td></tr>
-        <tr><td>Size ladder within items (26 &rarr; 51 &rarr; 144 &rarr; 288 &rarr; 512)</td><td class="pass-txt">PASS &mdash; 256 "Half-512" trays intentionally priced near 512 rates (confirmed vs 2026)</td></tr>
+        <tr><td>Size ladder within items (26 &rarr; 51 &rarr; 144 &rarr; 288 &rarr; 512)</td><td class="pass-txt">PASS &mdash; 256 is a 512 cut in half late in the cycle, so it prices near 512 rates (confirmed vs 2026 "Half-512")</td></tr>
         <tr><td>Per-plant inversions (excl. 256)</td><td class="pass-txt">PASS &mdash; 0 cases where a larger tray costs more per plant than a smaller one</td></tr>
         <tr><td>Cross-zone YoY direction conflicts</td><td class="pass-txt">PASS &mdash; no item went up in Zone 2 and down in Zone D (or reverse)</td></tr>
         <tr><td>CAD/USD zone ratio (A vs 2)</td><td class="pass-txt">PASS &mdash; 1.343 &plusmn; 0.01 on every item except Erysimum &amp; the steep-zone class flagged above</td></tr>
@@ -619,7 +619,7 @@
         <li class="ok"><b>No duplicate item+size rows</b></li>
         <li class="ok"><b>Raw ↔ ArtRoom</b> &mdash; summarized prices match source varieties</li>
         <li class="ok"><b>CK ArtRoom ↔ COMBOKITDATA</b> &mdash; 1,200 rows identical</li>
-        <li class="ok"><b>Size ladder</b> &mdash; 26→51→144→288→512 (256 = Half-512, intentional)</li>
+        <li class="ok"><b>Size ladder</b> &mdash; 26→51→144→288→512 (256 = 512 cut in half late in cycle, prices near 512)</li>
         <li class="ok"><b>Per-plant inversions</b> &mdash; 0 cases of larger tray costing more (excl. 256)</li>
         <li class="ok"><b>CAD/USD ratio</b> &mdash; Zone A / Zone 2 ≈ 1.343 ± 0.01</li>
         <li class="warn"><b>Zone ladder</b> &mdash; 4&lt;5&lt;6 and A&lt;B&lt;C&lt;D&lt;E hold; Zone 3 &lt; Zone 2 is new</li>
@@ -655,7 +655,7 @@
         <li class="ok"><b>Cross-zone YoY conflict</b> &mdash; Z2 up while ZD down (or reverse): 0 cases</li>
         <li class="warn"><b>Combo kit YoY</b> &mdash; 90 matched, 18 dropped, 30 new; outliers to +8% (Remember When)</li>
         <li class="ok"><b>EOD method YoY</b> &mdash; 2026 was exact 10% (×0.9); 2027 is ×1.1 → 9.09%</li>
-        <li class="ok"><b>Carry-over test</b> &mdash; odd 2027 ratios checked against 2026; Lemon Grass / Jalapeno / Cuphea / Evolvulus / Half-512 / sample table / CDE freight all confirmed intentional</li>
+        <li class="ok"><b>Carry-over test</b> &mdash; odd 2027 ratios checked against 2026; Lemon Grass / Jalapeno / Cuphea / Evolvulus / 256 Half-512 / sample table / CDE freight all confirmed intentional</li>
       </ul>
     </div>
 
