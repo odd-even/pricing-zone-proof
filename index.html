@@ -179,6 +179,51 @@
     line-height: 1.55;
   }
 
+  /* ===== Methodology / checks footnote grid ===== */
+  .method-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .method-card {
+    background: var(--card);
+    border: 1px solid var(--separator);
+    border-radius: 14px;
+    padding: 14px 16px 16px;
+    border-top: 3px solid var(--separator);
+  }
+  .method-card.pdf { border-top-color: var(--accent); }
+  .method-card.self { border-top-color: var(--warn); }
+  .method-card.yoy { border-top-color: #ff40b1; }
+  .method-card.pass { border-top-color: var(--pass); }
+  .method-card h3 {
+    font-size: 13px; font-weight: 800; letter-spacing: -0.2px;
+    margin-bottom: 8px; line-height: 1.3;
+  }
+  .method-card .tag {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.6px; text-transform: uppercase;
+    color: var(--text-secondary); margin-bottom: 6px;
+  }
+  .method-card ul {
+    list-style: none; padding: 0; margin: 0;
+  }
+  .method-card li {
+    font-size: 12px; line-height: 1.45; color: var(--text-secondary);
+    padding: 4px 0 4px 12px; position: relative;
+    border-top: 1px solid var(--separator);
+  }
+  .method-card li:first-child { border-top: none; }
+  .method-card li::before {
+    content: ""; position: absolute; left: 0; top: 10px;
+    width: 5px; height: 5px; border-radius: 50%; background: var(--na);
+  }
+  .method-card li.hit::before { background: var(--fail); }
+  .method-card li.ok::before { background: var(--pass); }
+  .method-card li.warn::before { background: var(--warn); }
+  .method-card li b { color: var(--text); font-weight: 650; }
+
   /* ===== Year-over-year anomaly review rows ===== */
   .yoy-head, .yoy-row {
     display: grid;
@@ -275,8 +320,8 @@
     <div class="stat pass"><div class="num">10/10</div><div class="lbl">Combos first &amp; last</div></div>
     <div class="stat pass"><div class="num">10/10</div><div class="lbl">Annuals + Perennials</div></div>
     <div class="stat pass"><div class="num">10/10</div><div class="lbl">Tag pricing</div></div>
-    <div class="stat fail"><div class="num">3</div><div class="lbl">Data errors</div></div>
-    <div class="stat warn"><div class="num">6</div><div class="lbl">To confirm</div></div>
+    <div class="stat fail"><div class="num">4</div><div class="lbl">Data errors</div></div>
+    <div class="stat warn"><div class="num">7</div><div class="lbl">To confirm</div></div>
     <div class="stat pass"><div class="num">5</div><div class="lbl">Resolved via 2026</div></div>
   </div>
 
@@ -348,8 +393,15 @@
       <p>The 2026 catalogs did the same thing: one example item (Ageratum Aloha Blue, Zone&nbsp;E-level numbers) identical in all 10 PDFs. The sample is a static illustration of how to read the table, not live zone data. 2027 continues the pattern with Ageratum Kona.</p>
     </div>
     <div class="fix warnfix">
-      <h3><span class="zonetag">ALL ZONES</span> Cilantro &amp; Cosmos Sensation escalate like no other item</h3>
-      <p>Cilantro (144) and Cosmos Sensation (144) climb <b>+50% from Zone 2&rarr;6</b> (file average +22%) and <b>+59% on the D&rarr;E step alone</b> (average +31%). <b>In 2026 both followed the normal curve</b> (Cilantro 288: Z6/Z2&nbsp;=&nbsp;1.21, E/Z2&nbsp;=&nbsp;1.98) &mdash; the steep curve is new in 2027.</p>
+      <h3><span class="zonetag">ALL ZONES</span> Steep zone curve is a whole class &mdash; not just Cilantro &amp; Cosmos</h3>
+      <p>A cluster of 144-tray items share the same steep zone ladder (Z6/Z2 ≈ 1.48–1.51 vs file median 1.20; ZE/ZA ≈ 2.5 vs median 1.61). <b>In 2026 they followed the normal curve</b> &mdash; this is new in 2027:</p>
+      <div class="vals">
+        Cosmos Sensation Mix 144 &nbsp;&nbsp;Z6/Z2 = 1.51 &nbsp;&middot;&nbsp; ZE/Z2 = 3.38<br>
+        Cilantro Santo 144 &nbsp;&nbsp;Z6/Z2 = 1.50 &nbsp;&middot;&nbsp; ZE/Z2 = 3.35<br>
+        Basil Amethyst / Nufar / Dolce Fresca / Prospera (all 144) &nbsp;&nbsp;Z6/Z2 = 1.48<br>
+        Dill Dukat / Fernleaf 144 &nbsp;&nbsp;Z6/Z2 = 1.48
+      </div>
+      <p>Looks like one shared rate class got assigned the wrong zone multipliers. Worth one look at whoever owns the zone-factor table.</p>
     </div>
     <div class="fix warnfix">
       <h3><span class="zonetag">ZONE E</span> +19% across the board vs 2026 &mdash; every other zone is &minus;1% to +6%</h3>
@@ -364,6 +416,17 @@
         512 &nbsp;&nbsp;$0.081 &rarr; $0.116 &nbsp;<span class="got">+43%</span>
       </div>
       <p>That puts the 288 at 0.84&times; the 144 price per plant &mdash; the category norm is 0.57&times;, and 2026's Aster was a normal 0.58&times;. Matsumoto 288 shows the same pattern. The bulk-size prices look inflated.</p>
+    </div>
+    <div class="fix">
+      <h3><span class="zonetag">ALL ZONES</span> Pepper Cayenne Long Thin &mdash; 144 jumped +28% while 288 fell &minus;6%</h3>
+      <p>Sizes of the same variety moved in opposite directions, breaking the size curve:</p>
+      <div class="vals">
+        144 &nbsp;&nbsp;$0.331 &rarr; $0.425 &nbsp;<span class="got">+28%</span><br>
+        288 &nbsp;&nbsp;$0.188 &rarr; $0.177 &nbsp;<span class="exp">&minus;6%</span><br>
+        256 &nbsp;&nbsp;$0.124 &rarr; $0.124 &nbsp;(flat)<br>
+        512 &nbsp;&nbsp;$0.108 &rarr; $0.108 &nbsp;(flat)
+      </div>
+      <p>The 144/288 ratio went from a normal <b>1.76</b> to <b>2.40</b> &mdash; the largest size-ratio shift of any matched vegetable. Either the 144 is too high now, or the bulk trays didn't get the same reprice.</p>
     </div>
   </div>
 
@@ -382,6 +445,19 @@
     <div class="fix warnfix">
       <h3><span class="zonetag">ALL ZONES</span> Tomato Empress &mdash; priciest veg, flattest curve (new item)</h3>
       <p>26-strip at <b>$2.67</b> (next tomato is ~$1.03) with the shallowest volume curve in Vegetables (L5/L1&nbsp;=&nbsp;0.87 vs 0.75 median). Not in the 2026 files, so there's no prior-year anchor &mdash; fine if it's genuinely a premium line, worth one look.</p>
+    </div>
+    <div class="fix warnfix">
+      <h3><span class="zonetag">ALL ZONES</span> Helianthus Sunfinity / Always Sunny &mdash; 3&times; the family, flattest annuals curve</h3>
+      <p>Within Helianthus 144s: Sunbuzz $0.351, Suntastic $0.462, but Always Sunny Gold <b>$1.092</b> and Sunfinity <b>$1.187</b> (z = +5.5 vs Annuals 144 mean). Same varieties also have the flattest L5/L1 in Annuals (0.90 vs median 0.76). Likely intentional premium genetics &mdash; but they sit in the same outlier signature as Erysimum, so worth confirming they're supposed to be that far above the rest of the genus.</p>
+    </div>
+    <div class="fix warnfix">
+      <h3><span class="zonetag">ALL ZONES</span> Cilantro 288 dropped &minus;27% while its 144 stayed flat</h3>
+      <p>Another size-curve break (same signature as Cayenne):</p>
+      <div class="vals">
+        144 &nbsp;&nbsp;$0.222 &rarr; $0.220 &nbsp;(~flat)<br>
+        288 &nbsp;&nbsp;$0.143 &rarr; $0.105 &nbsp;<span class="got">&minus;27%</span>
+      </div>
+      <p>144/288 ratio went 1.55 &rarr; <b>2.10</b>. Combined with the steep zone ladder above, Cilantro looks mis-keyed on more than one axis.</p>
     </div>
     <div class="fix okfix">
       <h3><span class="zonetag">RESOLVED</span> Lemon Grass, Jalapeno M vs La Bomba II, Cuphea &amp; Evolvulus 51s</h3>
@@ -446,7 +522,9 @@
         <tr><td>Raw SQL rows vs ArtRoom sheets (all 10 zones)</td><td class="pass-txt">PASS &mdash; every summarized ArtRoom price matches its source varieties; 0 conflicts inside "OK to Summarize" groups</td></tr>
         <tr><td>CK ArtRoom vs COMBOKITDATA</td><td class="pass-txt">PASS &mdash; 1,200 combo rows identical</td></tr>
         <tr><td>Size ladder within items (26 &rarr; 51 &rarr; 144 &rarr; 288 &rarr; 512)</td><td class="pass-txt">PASS &mdash; 256 "Half-512" trays intentionally priced near 512 rates (confirmed vs 2026)</td></tr>
-        <tr><td>CAD/USD zone ratio (A vs 2)</td><td class="pass-txt">PASS &mdash; 1.343 &plusmn; 0.01 on every item except Erysimum &amp; Cosmos flagged above</td></tr>
+        <tr><td>Per-plant inversions (excl. 256)</td><td class="pass-txt">PASS &mdash; 0 cases where a larger tray costs more per plant than a smaller one</td></tr>
+        <tr><td>Cross-zone YoY direction conflicts</td><td class="pass-txt">PASS &mdash; no item went up in Zone 2 and down in Zone D (or reverse)</td></tr>
+        <tr><td>CAD/USD zone ratio (A vs 2)</td><td class="pass-txt">PASS &mdash; 1.343 &plusmn; 0.01 on every item except Erysimum &amp; the steep-zone class flagged above</td></tr>
         <tr><td>Zone ladder 4 &lt; 5 &lt; 6 and A &lt; B &lt; C &lt; D &lt; E</td><td class="pass-txt">PASS &mdash; only the Zone 2/3 flip above</td></tr>
         <tr><td>No zeros, negatives, or flat L1=L5 pricing</td><td class="pass-txt">PASS</td></tr>
         <tr><td>High-end outliers reviewed</td><td class="pass-txt">Plausible premium items &mdash; Colocasia Redemption $5.22, Delphinium Red Lark $4.47, Philodendron Green Congo $4.23, Alstroemeria Inca $3.55, Tomato Empress $2.67 (all 26-strip)</td></tr>
@@ -510,11 +588,107 @@
     </table>
   </div>
 
+  <h2 class="section">How this proof was run</h2>
+  <p style="color:var(--text-secondary); font-size:13px; margin:-6px 0 16px; line-height:1.5;">Every check behind the findings above &mdash; what was measured, against what, and what it surfaced. Red / amber / green dots mark whether the check produced a finding on this dashboard.</p>
+  <div class="method-grid">
+
+    <div class="method-card pdf">
+      <div class="tag">PDF proof &middot; finished catalogs</div>
+      <h3>Catalog vs source, by zone</h3>
+      <ul>
+        <li class="ok"><b>Zone ID on cover &amp; headers</b> &mdash; all 10 PDFs</li>
+        <li class="ok"><b>Combos first &amp; last lines</b> &mdash; 24 Karat Gold → Very Valentine vs COMBOKITDATA</li>
+        <li class="ok"><b>Annuals / Perennials first &amp; last</b> &mdash; ArtRoom chunk ends, not line-by-line</li>
+        <li class="ok"><b>Tag pricing</b> &mdash; $0.055 US / $0.075 CA vs Samuel</li>
+        <li class="ok"><b>Accessories</b> &mdash; every zone vs 2026 catalogs (exact match)</li>
+        <li class="ok"><b>Freight box rates</b> &mdash; vs ws 2027 sheet; C/D/E empty by design (same as 2026)</li>
+        <li class="warn"><b>Rack minimums</b> &mdash; PDF matches 2026; ws sheet disagrees on zones 5 &amp; 6</li>
+        <li class="ok"><b>Dates / EOD deadlines</b> &mdash; rolled forward one year from 2026</li>
+        <li class="ok"><b>Zone 2 &amp; A deep proof</b> &mdash; cover, discounts, T&amp;C, shipping, truck</li>
+        <li class="hit"><b>Zone E re-proof</b> &mdash; Veronica Skyward L5 typo $1.159 vs $2.159 (fixed in later PDF)</li>
+      </ul>
+    </div>
+
+    <div class="method-card self">
+      <div class="tag">2027 vs itself &middot; Excel R3</div>
+      <h3>Internal consistency</h3>
+      <ul>
+        <li class="ok"><b>Level monotonicity</b> &mdash; L1 ≥ L2 ≥ … ≥ L5 on 17,860 rows</li>
+        <li class="ok"><b>EOD row present</b> &mdash; every NON-EOD has a matching EOD</li>
+        <li class="ok"><b>Same SKUs in all 10 zones</b> &mdash; 1,786 items, none missing</li>
+        <li class="ok"><b>No duplicate item+size rows</b></li>
+        <li class="ok"><b>Raw ↔ ArtRoom</b> &mdash; summarized prices match source varieties</li>
+        <li class="ok"><b>CK ArtRoom ↔ COMBOKITDATA</b> &mdash; 1,200 rows identical</li>
+        <li class="ok"><b>Size ladder</b> &mdash; 26→51→144→288→512 (256 = Half-512, intentional)</li>
+        <li class="ok"><b>Per-plant inversions</b> &mdash; 0 cases of larger tray costing more (excl. 256)</li>
+        <li class="ok"><b>CAD/USD ratio</b> &mdash; Zone A / Zone 2 ≈ 1.343 ± 0.01</li>
+        <li class="warn"><b>Zone ladder</b> &mdash; 4&lt;5&lt;6 and A&lt;B&lt;C&lt;D&lt;E hold; Zone 3 &lt; Zone 2 is new</li>
+      </ul>
+    </div>
+
+    <div class="method-card self">
+      <div class="tag">2027 vs itself &middot; outlier math</div>
+      <h3>Statistical anomaly scans</h3>
+      <ul>
+        <li class="hit"><b>Sibling gaps in series+size</b> &mdash; Erysimum 9.4×; Jalapeno M vs La Bomba (carry-over)</li>
+        <li class="hit"><b>Size-ratio outliers</b> &mdash; Lobelia Masterpiece 26/144 = 4.52 (median 1.93)</li>
+        <li class="warn"><b>Level-curve shape</b> &mdash; L5/L1 z-score within cat+size; Helianthus Sunfinity +4.6σ flat; Dracaena Spikes steep</li>
+        <li class="warn"><b>Absolute L1 z-score</b> &mdash; within cat+size; Helianthus / Begonia Groovy premium cluster</li>
+        <li class="hit"><b>Zone-step ratios</b> &mdash; Z6/Z2 &amp; ZE/ZA; Basil/Dill/Cilantro/Cosmos Sensation class at +4σ</li>
+        <li class="ok"><b>EOD discount distribution</b> &mdash; 8.6–9.6%, median 9.09% (from ×1.1 method)</li>
+        <li class="ok"><b>Flat level tails</b> &mdash; only Erysimum has L3=L4=L5</li>
+        <li class="ok"><b>Cross-category duplicates</b> &mdash; same plant priced differently in two cats: none</li>
+        <li class="warn"><b>High-end premiums</b> &mdash; Colocasia, Delphinium, Philodendron, Alstroemeria, Tomato Empress reviewed</li>
+      </ul>
+    </div>
+
+    <div class="method-card yoy">
+      <div class="tag">2026 → 2027 &middot; year-over-year</div>
+      <h3>Prior-year comparison</h3>
+      <ul>
+        <li class="ok"><b>Exact name+size match</b> &mdash; 694 ArtRoom rows matched to 2026 TXT imports</li>
+        <li class="warn"><b>Median YoY by zone</b> &mdash; items &amp; combos; Zone E +19% stands alone</li>
+        <li class="hit"><b>Biggest movers (±15% from median)</b> &mdash; interactive pass/fail list above</li>
+        <li class="hit"><b>Uneven size moves</b> &mdash; same item, sizes in opposite directions; Cayenne 144 +28% / 288 −6%</li>
+        <li class="hit"><b>Size-ratio shift</b> &mdash; 144/288 or 144/512 changed ≥0.20; Aster, Cayenne, Cilantro top the list</li>
+        <li class="ok"><b>Curve-shape change</b> &mdash; L5/L1 shifted ≥8pp; only Lavender Hidcote Blue (+11pp)</li>
+        <li class="ok"><b>Cross-zone YoY conflict</b> &mdash; Z2 up while ZD down (or reverse): 0 cases</li>
+        <li class="warn"><b>Combo kit YoY</b> &mdash; 90 matched, 18 dropped, 30 new; outliers to +8% (Remember When)</li>
+        <li class="ok"><b>EOD method YoY</b> &mdash; 2026 was exact 10% (×0.9); 2027 is ×1.1 → 9.09%</li>
+        <li class="ok"><b>Carry-over test</b> &mdash; odd 2027 ratios checked against 2026; Lemon Grass / Jalapeno / Cuphea / Evolvulus / Half-512 / sample table / CDE freight all confirmed intentional</li>
+      </ul>
+    </div>
+
+    <div class="method-card pass">
+      <div class="tag">Matching &amp; scope</div>
+      <h3>How rows were paired</h3>
+      <ul>
+        <li class="ok"><b>2027 source</b> &mdash; X3 Pricing Artroom export Update R3.xlsx (raw Zone sheets + ArtRoom + COMBOKITDATA)</li>
+        <li class="ok"><b>2026 source</b> &mdash; Proof/2026/imports zone_*.TXT + combokit_*.xlsx + finished GR1 ZONE *.pdf</li>
+        <li class="ok"><b>Identity key</b> &mdash; genus + series/variety name + tray size + SAU</li>
+        <li class="ok"><b>Prices used</b> &mdash; Level 1 NON-EOD unless checking EOD math or volume curves</li>
+        <li class="ok"><b>Zones covered</b> &mdash; 2–6 (US) and A–E (CA) for both years</li>
+        <li class="ok"><b>Not a line-by-line PDF OCR</b> &mdash; pricing pages proofed at chunk ends (first/last of combos, annuals, perennials) because data is pasted in blocks</li>
+      </ul>
+    </div>
+
+    <div class="method-card pass">
+      <div class="tag">Dashboard review tools</div>
+      <h3>What you can mark</h3>
+      <ul>
+        <li class="ok"><b>Anomaly cards</b> &mdash; Needs fix / OK as-is; saved in localStorage</li>
+        <li class="ok"><b>YoY mover rows</b> &mdash; ✓ deliberate / ✕ wrong; counter shows reviewed + flagged</li>
+        <li class="ok"><b>Verdicts are per-browser</b> &mdash; not synced across devices or users on the shared link</li>
+      </ul>
+    </div>
+
+  </div>
+
   <footer>
     <b>Tag pricing:</b> $0.055 USD on zones 2&ndash;6, $0.075 CAD on zones A&ndash;E &mdash; matches Samuel. (2026 was $0.055 US / $0.074 CA, so only the CAD tag moved.)<br>
     <b>Dates roll-forward:</b> all EOD deadlines, volume-period dates, and the pre-payment deadline correctly advanced one year from the 2026 catalogs.<br>
     <b>Note:</b> discounts/shipping pages still carry invisible white "Live Data Here / USA ONLY" slug text in the PDF text layer &mdash; harmless for print, worth cleaning in the masters eventually.<br>
-    Sources: Proof/Finished PDF (GR1 ZONE *_R2) &middot; X3 Pricing Artroom export Update R3.xlsx &middot; ws 2027.pdf
+    Sources: Proof/Finished PDF (GR1 ZONE *_R2) &middot; Proof/2026 (imports + GR1 ZONE PDFs) &middot; X3 Pricing Artroom export Update R3.xlsx &middot; ws 2027.pdf
   </footer>
 </div>
 
