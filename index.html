@@ -710,10 +710,10 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
   }
   .yoy-zone-chart .yzc-plot {
     display: grid;
-    grid-template-columns: 36px 1fr;
+    grid-template-columns: 40px 1fr;
     gap: 8px;
     align-items: stretch;
-    min-height: 200px;
+    min-height: 240px;
   }
   .yoy-zone-chart .yzc-yaxis {
     display: flex; flex-direction: column; justify-content: space-between;
@@ -721,6 +721,10 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
     padding: 0 2px 28px 0;
     font-size: 11px; font-weight: 650; color: var(--text-secondary);
     font-variant-numeric: tabular-nums;
+  }
+  .yoy-zone-chart .yzc-yaxis .yzc-zero-tick {
+    color: var(--text);
+    font-weight: 800;
   }
   .yoy-zone-chart .yzc-stage {
     position: relative;
@@ -736,6 +740,14 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
     display: block; width: 100%; height: 0;
     border-top: 1px dashed var(--separator);
   }
+  .yoy-zone-chart .yzc-zero {
+    position: absolute; left: 0; right: 0;
+    height: 0;
+    border-top: 2px solid var(--text);
+    opacity: 0.28;
+    pointer-events: none;
+    z-index: 1;
+  }
   .yoy-zone-chart .yzc-bars {
     position: absolute; left: 0; right: 0; top: 0; bottom: 28px;
     display: grid;
@@ -744,47 +756,37 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
     padding: 0 4px;
   }
   .yoy-zone-chart .yzc-col {
-    display: flex; flex-direction: column; align-items: center;
-    height: 100%;
     position: relative;
-  }
-  .yoy-zone-chart .yzc-grow {
-    flex: 1 1 auto;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    min-height: 0;
+    height: 100%;
   }
   .yoy-zone-chart .yzc-bar {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     width: min(100%, 28px);
-    border-radius: 6px 6px 2px 2px;
-    background: var(--accent);
     min-height: 2px;
+    background: var(--accent);
+  }
+  .yoy-zone-chart .yzc-bar.up {
+    border-radius: 6px 6px 1px 1px;
   }
   .yoy-zone-chart .yzc-bar.hot { background: var(--fail); }
   .yoy-zone-chart .yzc-bar.down {
     background: #0a84ff;
-    border-radius: 2px 2px 6px 6px;
-    margin-top: 0;
-  }
-  .yoy-zone-chart .yzc-neg {
-    flex: 0 0 18px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    border-radius: 1px 1px 6px 6px;
   }
   .yoy-zone-chart .yzc-val {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     font-size: 10px; font-weight: 750;
     color: var(--text-secondary);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
-    margin-bottom: 4px;
+    z-index: 2;
   }
   .yoy-zone-chart .yzc-col.hot .yzc-val { color: var(--fail); }
-  .yoy-zone-chart .yzc-col.down .yzc-val { color: #0a84ff; margin-bottom: 0; margin-top: 2px; }
+  .yoy-zone-chart .yzc-col.down .yzc-val { color: #0a84ff; }
   .yoy-zone-chart .yzc-labels {
     position: absolute; left: 0; right: 0; bottom: 0; height: 28px;
     display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px;
@@ -1380,10 +1382,11 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
         <div class="yzc-yaxis" aria-hidden="true">
           <span>20%</span>
           <span>10%</span>
-          <span>0%</span>
+          <span class="yzc-zero-tick">0%</span>
+          <span>&minus;5%</span>
         </div>
         <div class="yzc-stage">
-          <div class="yzc-grid" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="yzc-grid" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
           <div class="yzc-bars" id="yoyZoneBars"></div>
           <div class="yzc-labels" id="yoyZoneLabels" aria-hidden="true"></div>
         </div>
@@ -2304,10 +2307,25 @@ window.JF_PROOF_SYNC = (function () {
     { z: "D", v: -1.6 },
     { z: "E", v: 19.3 }
   ];
-  var MAX = 20;
+  var YMAX = 20;
+  var YMIN = -5;
+  var RANGE = YMAX - YMIN;
   var bars = document.getElementById("yoyZoneBars");
   var labels = document.getElementById("yoyZoneLabels");
   if (!bars || !labels) return;
+
+  function topPct(v) {
+    return ((YMAX - v) / RANGE) * 100;
+  }
+  function heightPct(v) {
+    return (Math.abs(v) / RANGE) * 100;
+  }
+
+  var zero = document.createElement("div");
+  zero.className = "yzc-zero";
+  zero.setAttribute("aria-hidden", "true");
+  zero.style.top = topPct(0) + "%";
+  bars.appendChild(zero);
 
   DATA.forEach(function (d) {
     var col = document.createElement("div");
@@ -2315,35 +2333,29 @@ window.JF_PROOF_SYNC = (function () {
     var down = d.v < 0;
     col.className = "yzc-col" + (hot ? " hot" : "") + (down ? " down" : "");
 
-    var grow = document.createElement("div");
-    grow.className = "yzc-grow";
+    var bar = document.createElement("div");
+    bar.className = "yzc-bar " + (down ? "down" : "up") + (hot ? " hot" : "");
+    bar.title = "Zone " + d.z + ": " + (d.v > 0 ? "+" : "") + d.v + "%";
+    var h = Math.max(1.2, heightPct(d.v));
+    if (down) {
+      bar.style.top = topPct(0) + "%";
+      bar.style.height = h + "%";
+    } else {
+      bar.style.top = topPct(d.v) + "%";
+      bar.style.height = h + "%";
+    }
 
     var val = document.createElement("div");
     val.className = "yzc-val";
     val.textContent = (d.v > 0 ? "+" : "") + d.v.toFixed(1) + "%";
-
-    var bar = document.createElement("div");
-    bar.className = "yzc-bar" + (hot ? " hot" : "") + (down ? " down" : "");
-    bar.title = "Zone " + d.z + ": " + (d.v > 0 ? "+" : "") + d.v + "%";
-
-    var neg = document.createElement("div");
-    neg.className = "yzc-neg";
-
     if (down) {
-      bar.style.height = Math.max(3, Math.round((Math.abs(d.v) / 2) * 18)) + "px";
-      neg.appendChild(bar);
-      // value sits in the grow area just above baseline
-      val.style.marginBottom = "2px";
-      grow.appendChild(val);
+      val.style.top = "calc(" + (topPct(0) + h) + "% + 3px)";
     } else {
-      var pct = Math.max(2, Math.round((d.v / MAX) * 100));
-      bar.style.height = pct + "%";
-      grow.appendChild(val);
-      grow.appendChild(bar);
+      val.style.bottom = "calc(" + (100 - topPct(d.v)) + "% + 3px)";
     }
 
-    col.appendChild(grow);
-    col.appendChild(neg);
+    col.appendChild(bar);
+    col.appendChild(val);
     bars.appendChild(col);
 
     var lab = document.createElement("span");
