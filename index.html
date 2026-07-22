@@ -321,7 +321,7 @@
     <div class="stat pass"><div class="num">10/10</div><div class="lbl">Annuals + Perennials</div></div>
     <div class="stat pass"><div class="num">10/10</div><div class="lbl">Tag pricing</div></div>
     <div class="stat fail"><div class="num">4</div><div class="lbl">Data errors</div></div>
-    <div class="stat warn"><div class="num">7</div><div class="lbl">To confirm</div></div>
+    <div class="stat warn"><div class="num">8</div><div class="lbl">To confirm</div></div>
     <div class="stat pass"><div class="num">5</div><div class="lbl">Resolved via 2026</div></div>
   </div>
 
@@ -393,15 +393,21 @@
       <p>The 2026 catalogs did the same thing: one example item (Ageratum Aloha Blue, Zone&nbsp;E-level numbers) identical in all 10 PDFs. The sample is a static illustration of how to read the table, not live zone data. 2027 continues the pattern with Ageratum Kona.</p>
     </div>
     <div class="fix warnfix">
-      <h3><span class="zonetag">ALL ZONES</span> Steep zone curve is a whole class &mdash; not just Cilantro &amp; Cosmos</h3>
-      <p>A cluster of 144-tray items share the same steep zone ladder (Z6/Z2 ≈ 1.48–1.51 vs file median 1.20; ZE/ZA ≈ 2.5 vs median 1.61). <b>In 2026 they followed the normal curve</b> &mdash; this is new in 2027:</p>
+      <h3><span class="zonetag">ALL ZONES</span> Steep zone curve &mdash; two different stories</h3>
+      <p><b>New in 2027</b> (followed the normal curve last year; now Z6/Z2 ≈ 1.48–1.51 vs file median 1.20):</p>
       <div class="vals">
         Cosmos Sensation Mix 144 &nbsp;&nbsp;Z6/Z2 = 1.51 &nbsp;&middot;&nbsp; ZE/Z2 = 3.38<br>
-        Cilantro Santo 144 &nbsp;&nbsp;Z6/Z2 = 1.50 &nbsp;&middot;&nbsp; ZE/Z2 = 3.35<br>
-        Basil Amethyst / Nufar / Dolce Fresca / Prospera (all 144) &nbsp;&nbsp;Z6/Z2 = 1.48<br>
+        Cilantro Santo 144 &nbsp;&nbsp;Z6/Z2 = 1.50<br>
+        Basil Amethyst / Nufar / Dolce Fresca / Prospera 144 &nbsp;&nbsp;Z6/Z2 = 1.48<br>
         Dill Dukat / Fernleaf 144 &nbsp;&nbsp;Z6/Z2 = 1.48
       </div>
-      <p>Looks like one shared rate class got assigned the wrong zone multipliers. Worth one look at whoever owns the zone-factor table.</p>
+      <p><b>Carry-over, slightly steeper</b> &mdash; French Marigolds were already on a high zone ladder in 2026 (~1.40) and nudged up further:</p>
+      <div class="vals">
+        Super Hero 144 &nbsp;&nbsp;1.41 → 1.45<br>
+        Durango 144 &nbsp;&nbsp;1.41 → 1.44<br>
+        Bonanza 144 &nbsp;&nbsp;1.40 → 1.43
+      </div>
+      <p>African Marigolds (Antigua / Inca / Taishan) stay nearer normal (~1.37). The herb/Cosmos group looks like a wrong rate class; the French Marigolds look like an intentional (and intensifying) ladder.</p>
     </div>
     <div class="fix warnfix">
       <h3><span class="zonetag">ZONE E</span> +19% across the board vs 2026 &mdash; every other zone is &minus;1% to +6%</h3>
@@ -459,6 +465,15 @@
       </div>
       <p>144/288 ratio went 1.55 &rarr; <b>2.10</b>. Combined with the steep zone ladder above, Cilantro looks mis-keyed on more than one axis.</p>
     </div>
+    <div class="fix warnfix">
+      <h3><span class="zonetag">LINERS</span> Rose Sunrosa &mdash; compressed Canada zone ladder</h3>
+      <p>Sunrosa 26-strip ZE/ZD = <b>1.13</b> (Liners median 1.32, z = −4.1). Zone ladder is almost flat through the CA zones:</p>
+      <div class="vals">
+        Z2 $2.675 &nbsp;&middot;&nbsp; Z6 $2.886 &nbsp;(Z6/Z2 = 1.08, very flat for US too)<br>
+        ZA $3.639 &nbsp;&middot;&nbsp; ZD $3.969 &nbsp;&middot;&nbsp; ZE $4.491
+      </div>
+      <p>YoY: Zone 2 essentially flat (−1%), Zone E only +7% &mdash; so Sunrosa also skipped most of the Zone E +19% uplift. Four colors share the same prices. Fine if premium roses use a special rate card; odd if they should follow the house liner curve.</p>
+    </div>
     <div class="fix okfix">
       <h3><span class="zonetag">RESOLVED</span> Lemon Grass, Jalapeno M vs La Bomba II, Cuphea &amp; Evolvulus 51s</h3>
       <p>All four odd ratios existed identically in 2026 &mdash; deliberate carry-overs, not new errors:</p>
@@ -495,6 +510,7 @@
     </div>
     <div class="yoy-head"><span>Item</span><span>By size &mdash; 2026 &rarr; 2027</span><span style="text-align:right">Change</span><span style="text-align:right">Verdict</span></div>
     <div id="yoyListDown"></div>
+    <p class="note">These cuts are <b>not Zone-2-only</b> &mdash; zones 3–D move within a few points of Zone 2 on every item above. Zone E is the exception (cuts of −0% to −14%) because its across-the-board ~+19% uplift offsets them. Within Perennials overall, only <b>9%</b> of matched items fell ≥20%; the deep cuts are a Papaver / Rudbeckia / Hibiscus cluster, not a category-wide slash (Perennials median YoY = −2.2%).</p>
   </div>
 
   <div class="card">
@@ -523,6 +539,10 @@
         <tr><td>CK ArtRoom vs COMBOKITDATA</td><td class="pass-txt">PASS &mdash; 1,200 combo rows identical</td></tr>
         <tr><td>Size ladder within items (26 &rarr; 51 &rarr; 144 &rarr; 288 &rarr; 512)</td><td class="pass-txt">PASS &mdash; 256 is a 512 cut in half late in the cycle, so it prices near 512 rates (confirmed vs 2026 "Half-512")</td></tr>
         <tr><td>Per-plant inversions (excl. 256)</td><td class="pass-txt">PASS &mdash; 0 cases where a larger tray costs more per plant than a smaller one</td></tr>
+        <tr><td>Identical L1 across different sizes of same variety</td><td class="pass-txt">PASS &mdash; 0 copy-paste collisions</td></tr>
+        <tr><td>Mid-curve flats (L1–L4)</td><td class="pass-txt">PASS &mdash; only Erysimum (already flagged)</td></tr>
+        <tr><td>US zone ladder breaks other than 2→3</td><td class="pass-txt">PASS &mdash; all 3,123 US breaks are the known Zone 3 &lt; Zone 2 flip; CA ladder has 0 breaks</td></tr>
+        <tr><td>Combo kit volume-curve shape YoY</td><td class="pass-txt">PASS &mdash; no kit shifted L5/L1 by ≥3pp</td></tr>
         <tr><td>Cross-zone YoY direction conflicts</td><td class="pass-txt">PASS &mdash; no item went up in Zone 2 and down in Zone D (or reverse)</td></tr>
         <tr><td>CAD/USD zone ratio (A vs 2)</td><td class="pass-txt">PASS &mdash; 1.343 &plusmn; 0.01 on every item except Erysimum &amp; the steep-zone class flagged above</td></tr>
         <tr><td>Zone ladder 4 &lt; 5 &lt; 6 and A &lt; B &lt; C &lt; D &lt; E</td><td class="pass-txt">PASS &mdash; only the Zone 2/3 flip above</td></tr>
@@ -621,8 +641,11 @@
         <li class="ok"><b>CK ArtRoom ↔ COMBOKITDATA</b> &mdash; 1,200 rows identical</li>
         <li class="ok"><b>Size ladder</b> &mdash; 26→51→144→288→512 (256 = 512 cut in half late in cycle, prices near 512)</li>
         <li class="ok"><b>Per-plant inversions</b> &mdash; 0 cases of larger tray costing more (excl. 256)</li>
+        <li class="ok"><b>Identical L1 across sizes</b> &mdash; 0 same-variety copy-paste collisions</li>
+        <li class="ok"><b>Mid-curve flats / step spikes</b> &mdash; only Erysimum flats; 0 uneven volume-step spikes</li>
         <li class="ok"><b>CAD/USD ratio</b> &mdash; Zone A / Zone 2 ≈ 1.343 ± 0.01</li>
-        <li class="warn"><b>Zone ladder</b> &mdash; 4&lt;5&lt;6 and A&lt;B&lt;C&lt;D&lt;E hold; Zone 3 &lt; Zone 2 is new</li>
+        <li class="warn"><b>Zone ladder</b> &mdash; every US break is 2→3 (3,123 items); CA A→E has 0 breaks</li>
+        <li class="hit"><b>Multi-flag items</b> &mdash; 20 SKUs fail ≥2 independent tests (Helianthus, steep-zone class, Erysimum)</li>
       </ul>
     </div>
 
@@ -634,11 +657,12 @@
         <li class="hit"><b>Size-ratio outliers</b> &mdash; Lobelia Masterpiece 26/144 = 4.52 (median 1.93)</li>
         <li class="warn"><b>Level-curve shape</b> &mdash; L5/L1 z-score within cat+size; Helianthus Sunfinity +4.6σ flat; Dracaena Spikes steep</li>
         <li class="warn"><b>Absolute L1 z-score</b> &mdash; within cat+size; Helianthus / Begonia Groovy premium cluster</li>
-        <li class="hit"><b>Zone-step ratios</b> &mdash; Z6/Z2 &amp; ZE/ZA; Basil/Dill/Cilantro/Cosmos Sensation class at +4σ</li>
+        <li class="hit"><b>Zone-step ratios</b> &mdash; Z6/Z2 &amp; ZE/ZA; new-in-2027 herb/Cosmos class + carry-over French Marigolds</li>
+        <li class="warn"><b>Compressed CA ladder</b> &mdash; Rose Sunrosa ZE/ZD = 1.13 (Liners median 1.32)</li>
         <li class="ok"><b>EOD discount distribution</b> &mdash; 8.6–9.6%, median 9.09% (from ×1.1 method)</li>
         <li class="ok"><b>Flat level tails</b> &mdash; only Erysimum has L3=L4=L5</li>
         <li class="ok"><b>Cross-category duplicates</b> &mdash; same plant priced differently in two cats: none</li>
-        <li class="warn"><b>High-end premiums</b> &mdash; Colocasia, Delphinium, Philodendron, Alstroemeria, Tomato Empress reviewed</li>
+        <li class="warn"><b>High-end premiums</b> &mdash; Colocasia, Delphinium, Philodendron, Alstroemeria, Tomato Empress, Helianthus Sunfinity reviewed</li>
       </ul>
     </div>
 
@@ -648,6 +672,8 @@
       <ul>
         <li class="ok"><b>Exact name+size match</b> &mdash; 694 ArtRoom rows matched to 2026 TXT imports</li>
         <li class="warn"><b>Median YoY by zone</b> &mdash; items &amp; combos; Zone E +19% stands alone</li>
+        <li class="warn"><b>Median YoY by category</b> &mdash; Perennials −2.2%, Herbs ~0%, Annuals +4.8%, Cuttings +5.6%, Succulents +6.7%</li>
+        <li class="ok"><b>Deep perennial cuts are a cluster</b> &mdash; only 9% of Perennials fell ≥20% (Papaver / Rudbeckia / Hibiscus); cuts track across zones 2–D</li>
         <li class="hit"><b>Biggest movers (±15% from median)</b> &mdash; interactive pass/fail list above</li>
         <li class="hit"><b>Uneven size moves</b> &mdash; same item, sizes in opposite directions; Cayenne 144 +28% / 288 −6%</li>
         <li class="hit"><b>Size-ratio shift</b> &mdash; 144/288 or 144/512 changed ≥0.20; Aster, Cayenne, Cilantro top the list</li>
