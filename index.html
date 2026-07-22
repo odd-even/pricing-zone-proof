@@ -867,7 +867,7 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
   /* ===== Year-over-year anomaly review rows ===== */
   .yoy-head, .yoy-row {
     display: grid;
-    grid-template-columns: minmax(150px, 1fr) minmax(0, 2.2fr) 92px 96px;
+    grid-template-columns: minmax(130px, 1fr) minmax(0, 2fr) 88px minmax(230px, 310px);
     gap: 14px;
     align-items: center;
     padding: 12px 16px;
@@ -882,22 +882,10 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
     border-left: 3px solid transparent;
     border-radius: 2px;
     transition: background 0.18s, border-color 0.18s, opacity 0.18s;
-    align-items: start;
   }
   .yoy-row.ok { background: var(--pass-soft); border-left-color: var(--pass); }
   .yoy-row.ok .yoy-item, .yoy-row.ok .yoy-chip { opacity: 0.6; }
   .yoy-row.bad { background: var(--fail-soft); border-left-color: var(--fail); }
-  .yoy-row > .yoy-item,
-  .yoy-row > .yoy-chips,
-  .yoy-row > .yoy-pct,
-  .yoy-row > .yoy-actions {
-    align-self: center;
-  }
-  .yoy-row > .card-comments {
-    grid-column: 1 / -1;
-    margin-top: 2px;
-    padding-top: 2px;
-  }
   .yoy-item { font-weight: 700; font-size: 13.5px; line-height: 1.35; }
   .yoy-item .cat {
     display: block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.6px;
@@ -927,7 +915,52 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
   .yoy-pct .bar {
     height: 100%; border-radius: 999px; min-width: 6px;
   }
-  .yoy-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .yoy-review {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .yoy-review-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .yoy-actions { display: flex; gap: 8px; flex: 0 0 auto; }
+  .yoy-review .comment-composer {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0;
+    gap: 4px;
+  }
+  .yoy-review .comment-composer input {
+    font-size: 12px;
+    padding: 5px 0;
+  }
+  .yoy-review .comment-composer .add-comment {
+    font-size: 11px;
+    padding: 4px 0;
+  }
+  .yoy-review .comment-author {
+    margin-top: 0;
+    width: 26px;
+    height: 26px;
+    flex: 0 0 auto;
+  }
+  .yoy-review .comment-list {
+    padding-left: 2px;
+  }
+  .yoy-review .comment-item {
+    padding: 3px 0;
+  }
+  .yoy-review .comment-item .who {
+    min-width: 3em;
+    font-size: 11px;
+  }
+  .yoy-review .comment-item .body {
+    font-size: 12px;
+  }
   .yoy-btn {
     width: 36px; height: 36px; border-radius: 50%;
     border: 1.5px solid var(--separator); background: var(--card);
@@ -956,14 +989,24 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
   .yoy-btn.pass.on::after { color: #fff; }
   .yoy-summary { display: inline-flex; gap: 8px; align-items: center; }
   .yoy-summary .flagged { color: var(--fail); font-weight: 700; font-size: 12px; }
+  @media (max-width: 900px) {
+    .yoy-head, .yoy-row {
+      grid-template-columns: minmax(120px, 1fr) minmax(0, 1.6fr) 80px minmax(200px, 1fr);
+      gap: 10px;
+    }
+  }
   @media (max-width: 700px) {
     .yoy-head { display: none; }
-    .yoy-row { grid-template-columns: 1fr auto; grid-template-areas: "item pct" "chips chips" "actions actions" "comments comments"; row-gap: 8px; }
+    .yoy-row {
+      grid-template-columns: 1fr auto;
+      grid-template-areas: "item pct" "chips chips" "review review";
+      row-gap: 8px;
+    }
     .yoy-row > .yoy-item { grid-area: item; }
     .yoy-row > .yoy-chips { grid-area: chips; }
     .yoy-row > .yoy-pct { grid-area: pct; }
-    .yoy-row > .yoy-actions { grid-area: actions; justify-content: flex-start; }
-    .yoy-row > .card-comments { grid-area: comments; }
+    .yoy-row > .yoy-review { grid-area: review; }
+    .yoy-review-bar { flex-wrap: wrap; }
   }
 
   footer { margin-top: 30px; color: var(--text-secondary); font-size: 12px; line-height: 1.6; }
@@ -1454,7 +1497,7 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
       </div>
       <span class="section-count" id="yoyCountDown"></span>
     </div>
-    <div class="yoy-head"><span>Item</span><span>By size &mdash; 2026 &rarr; 2027</span><span style="text-align:right">Change</span><span style="text-align:right">Verdict</span></div>
+    <div class="yoy-head"><span>Item</span><span>By size &mdash; 2026 &rarr; 2027</span><span style="text-align:right">Change</span><span>Verdict / note</span></div>
     <div id="yoyListDown"></div>
     <p class="note">These cuts are <b>not Zone-2-only</b> &mdash; zones 3–D move within a few points of Zone 2 on every item above. Zone E is the exception (cuts of −0% to −14%) because its across-the-board ~+19% uplift offsets them. Within Perennials overall, only <b>9%</b> of matched items fell ≥20%; the deep cuts are a Papaver / Rudbeckia / Hibiscus cluster, not a category-wide slash (Perennials median YoY = −2.2%).</p>
   </div>
@@ -1467,7 +1510,7 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
       </div>
       <span class="section-count" id="yoyCountUp"></span>
     </div>
-    <div class="yoy-head"><span>Item</span><span>By size &mdash; 2026 &rarr; 2027</span><span style="text-align:right">Change</span><span style="text-align:right">Verdict</span></div>
+    <div class="yoy-head"><span>Item</span><span>By size &mdash; 2026 &rarr; 2027</span><span style="text-align:right">Change</span><span>Verdict / note</span></div>
     <div id="yoyListUp"></div>
     <p class="note">Whole families move together (hot peppers, strawberries, landscape begonias), so these read as coordinated repricing rather than typos. The exceptions worth a question: Trinidad Scorpion's sizes moved very unevenly (+22% to +54%), and Aster's 288/512 jumped while its 144 only went +8% &mdash; flagged as a data error above. Mark each one <b>&#10003;</b> (deliberate, OK) or <b>&#10005;</b> (wrong, needs a fix) &mdash; your verdicts are saved in this browser.</p>
   </div>
@@ -2589,8 +2632,6 @@ window.JF_PROOF_SYNC = (function () {
       actions.appendChild(bPass);
       actions.appendChild(bFail);
 
-      var comments = document.createElement("div");
-      comments.className = "card-comments";
       var list = document.createElement("div");
       list.className = "comment-list";
       var composer = document.createElement("div");
@@ -2656,10 +2697,16 @@ window.JF_PROOF_SYNC = (function () {
         }
       });
       authorWrap.appendChild(authorSel);
+      composer.appendChild(authorWrap);
 
-      comments.appendChild(list);
-      comments.appendChild(composer);
-      comments.appendChild(authorWrap);
+      var review = document.createElement("div");
+      review.className = "yoy-review";
+      var reviewBar = document.createElement("div");
+      reviewBar.className = "yoy-review-bar";
+      reviewBar.appendChild(actions);
+      reviewBar.appendChild(composer);
+      review.appendChild(reviewBar);
+      review.appendChild(list);
 
       function renderCommentList() {
         var entry = readEntry(key);
@@ -2747,8 +2794,7 @@ window.JF_PROOF_SYNC = (function () {
       row.appendChild(item);
       row.appendChild(chips);
       row.appendChild(pctEl);
-      row.appendChild(actions);
-      row.appendChild(comments);
+      row.appendChild(review);
       listEl.appendChild(row);
       render();
       updaters.push(render);
