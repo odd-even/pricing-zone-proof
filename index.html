@@ -421,7 +421,7 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
   /* ===== Review controls ===== */
   .review-bar {
     display: flex; gap: 6px; margin-top: 12px; padding-top: 12px;
-    border-top: 1px solid var(--separator); align-items: center;
+    border-top: 1px solid var(--separator); align-items: center; flex-wrap: wrap;
   }
   .review-btn {
     font: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.2px;
@@ -434,6 +434,84 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
   .review-btn.okasis.on { background: var(--pass-soft); color: var(--pass); border-color: var(--pass); }
   .fix.reviewed-ok { border-top-color: var(--pass); }
   .fix.reviewed-fix { border-top-color: var(--fail); }
+
+  .card-comments {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .comment-composer {
+    display: grid;
+    grid-template-columns: minmax(96px, 120px) 1fr auto;
+    gap: 6px;
+    align-items: start;
+  }
+  @media (max-width: 560px) {
+    .comment-composer { grid-template-columns: 1fr; }
+  }
+  .comment-composer select,
+  .comment-composer textarea,
+  .comment-composer button {
+    font: inherit;
+  }
+  .comment-composer select {
+    font-size: 12px; font-weight: 650;
+    padding: 7px 10px; border-radius: 10px;
+    border: 1px solid var(--separator);
+    background: var(--card2); color: var(--text);
+  }
+  .comment-composer textarea {
+    font-size: 13px; line-height: 1.4;
+    min-height: 38px; max-height: 120px;
+    padding: 8px 10px; border-radius: 10px;
+    border: 1px solid var(--separator);
+    background: var(--card2); color: var(--text);
+    resize: vertical;
+  }
+  .comment-composer textarea:focus,
+  .comment-composer select:focus {
+    outline: none;
+    border-color: var(--text-secondary);
+  }
+  .comment-composer .add-comment {
+    font-size: 12px; font-weight: 700;
+    padding: 7px 12px; border-radius: 10px;
+    border: 1px solid var(--separator);
+    background: transparent; color: var(--text-secondary);
+    cursor: pointer; white-space: nowrap;
+  }
+  .comment-composer .add-comment:hover {
+    border-color: var(--text-secondary); color: var(--text);
+  }
+  .comment-list {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .comment-list:empty { display: none; }
+  .comment-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: start;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: var(--card2);
+    border: 1px solid var(--separator);
+  }
+  .comment-item .who {
+    font-size: 11px; font-weight: 800; letter-spacing: 0.2px;
+    color: var(--text); margin-bottom: 2px;
+  }
+  .comment-item .body {
+    font-size: 13px; line-height: 1.4; color: var(--text-secondary);
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .comment-item .remove-comment {
+    font: inherit; font-size: 11px; font-weight: 700;
+    color: var(--text-secondary); background: transparent;
+    border: none; cursor: pointer; padding: 2px 4px;
+  }
+  .comment-item .remove-comment:hover { color: var(--fail); }
 
   .resolved-drawer {
     margin: -6px 0 28px;
@@ -1376,7 +1454,7 @@ html.dark .data-table.heat .chg-up2 { color: #ffcc66; }
       <div class="tag">Dashboard review tools</div>
       <h3>What you can mark</h3>
       <ul>
-        <li class="ok"><b>Anomaly cards</b> &mdash; Needs fix / OK as-is; synced live for the team</li>
+        <li class="ok"><b>Anomaly cards</b> &mdash; Needs fix / OK as-is, plus named comments; synced live for the team</li>
         <li class="ok"><b>YoY mover rows</b> &mdash; ✓ deliberate / ✕ wrong; counter shows reviewed + flagged</li>
         <li class="ok"><b>Shared via Firebase</b> &mdash; same seamless sync as the checklist (no tokens)</li>
       </ul>
@@ -1697,10 +1775,58 @@ window.JF_PROOF_SYNC = (function () {
 (function () {
   var hub = window.JF_PROOF_SYNC;
   var state = hub.anomalyState;
+  var AUTHORS = ["Ed", "Peter", "Sam", "Ernest"];
+  var AUTHOR_KEY = "proofCommentAuthor.v1";
   function save() { hub.saveAnomaly(); }
 
   function slug(text) {
     return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60);
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function readEntry(id) {
+    var cur = state[id];
+    if (!cur) return { verdict: null, comments: [] };
+    if (typeof cur === "string") return { verdict: cur, comments: [] };
+    return {
+      verdict: cur.verdict || null,
+      comments: Array.isArray(cur.comments) ? cur.comments.slice() : []
+    };
+  }
+
+  function writeEntry(id, entry) {
+    var hasComments = entry.comments && entry.comments.length;
+    if (!entry.verdict && !hasComments) {
+      delete state[id];
+    } else if (entry.verdict && !hasComments) {
+      state[id] = entry.verdict;
+    } else {
+      state[id] = { verdict: entry.verdict || null, comments: entry.comments };
+    }
+    save();
+  }
+
+  function getVerdict(id) {
+    return readEntry(id).verdict;
+  }
+
+  function preferredAuthor() {
+    try {
+      var saved = localStorage.getItem(AUTHOR_KEY);
+      if (saved && AUTHORS.indexOf(saved) >= 0) return saved;
+    } catch (e) {}
+    return AUTHORS[0];
+  }
+
+  function rememberAuthor(name) {
+    try { localStorage.setItem(AUTHOR_KEY, name); } catch (e) {}
   }
 
   var groups = document.querySelectorAll("[data-review-group]");
@@ -1724,7 +1850,7 @@ window.JF_PROOF_SYNC = (function () {
       return card.classList.contains("okfix");
     }
     function isResolved(card) {
-      var v = state[card.dataset.reviewId];
+      var v = getVerdict(card.dataset.reviewId);
       if (v === "fix") return false; // reopened — back to main grid
       if (v === "ok") return true;
       return isDesignedResolved(card);
@@ -1784,7 +1910,7 @@ window.JF_PROOF_SYNC = (function () {
       if (!badge) return;
       var done = 0;
       all.forEach(function (card) {
-        if (isDesignedResolved(card) || state[card.dataset.reviewId]) done++;
+        if (isDesignedResolved(card) || getVerdict(card.dataset.reviewId)) done++;
       });
       badge.textContent = done + "/" + all.length + " reviewed";
       badge.classList.toggle("done", done === all.length);
@@ -1807,8 +1933,67 @@ window.JF_PROOF_SYNC = (function () {
       bar.appendChild(btnOk);
       card.appendChild(bar);
 
+      var comments = document.createElement("div");
+      comments.className = "card-comments";
+      var composer = document.createElement("div");
+      composer.className = "comment-composer";
+      var authorSel = document.createElement("select");
+      authorSel.setAttribute("aria-label", "Comment author");
+      AUTHORS.forEach(function (name) {
+        var opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        authorSel.appendChild(opt);
+      });
+      authorSel.value = preferredAuthor();
+      authorSel.addEventListener("change", function () {
+        rememberAuthor(authorSel.value);
+      });
+      var input = document.createElement("textarea");
+      input.rows = 1;
+      input.placeholder = "Add a comment…";
+      var addBtn = document.createElement("button");
+      addBtn.type = "button";
+      addBtn.className = "add-comment";
+      addBtn.textContent = "Comment";
+      composer.appendChild(authorSel);
+      composer.appendChild(input);
+      composer.appendChild(addBtn);
+      var list = document.createElement("div");
+      list.className = "comment-list";
+      comments.appendChild(list);
+      comments.appendChild(composer);
+      card.appendChild(comments);
+
+      function renderCommentList() {
+        var entry = readEntry(id);
+        list.innerHTML = "";
+        entry.comments.forEach(function (c, idx) {
+          var item = document.createElement("div");
+          item.className = "comment-item";
+          var main = document.createElement("div");
+          main.innerHTML =
+            '<div class="who">' + escapeHtml(c.by || "Unknown") + "</div>" +
+            '<div class="body">' + escapeHtml(c.text || "") + "</div>";
+          var remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "remove-comment";
+          remove.setAttribute("aria-label", "Remove comment");
+          remove.textContent = "Remove";
+          remove.addEventListener("click", function () {
+            var next = readEntry(id);
+            next.comments.splice(idx, 1);
+            writeEntry(id, next);
+            render();
+          });
+          item.appendChild(main);
+          item.appendChild(remove);
+          list.appendChild(item);
+        });
+      }
+
       function render() {
-        var v = state[id];
+        var v = getVerdict(id);
         btnFix.classList.toggle("on", v === "fix");
         btnOk.classList.toggle("on", v === "ok" || (isDesignedResolved(card) && !v));
         card.classList.toggle("reviewed-fix", v === "fix");
@@ -1816,14 +2001,40 @@ window.JF_PROOF_SYNC = (function () {
         placeCard(card);
         syncDrawer();
         updateCount();
+        renderCommentList();
       }
       function set(v) {
-        if (state[id] === v) { delete state[id]; } else { state[id] = v; }
-        save();
+        var entry = readEntry(id);
+        if (entry.verdict === v) entry.verdict = null;
+        else entry.verdict = v;
+        writeEntry(id, entry);
+        render();
+      }
+      function addComment() {
+        var text = (input.value || "").replace(/^\s+|\s+$/g, "");
+        if (!text) return;
+        var by = authorSel.value;
+        if (AUTHORS.indexOf(by) < 0) by = AUTHORS[0];
+        rememberAuthor(by);
+        var entry = readEntry(id);
+        entry.comments.push({
+          by: by,
+          text: text,
+          at: new Date().toISOString()
+        });
+        writeEntry(id, entry);
+        input.value = "";
         render();
       }
       btnFix.addEventListener("click", function () { set("fix"); });
       btnOk.addEventListener("click", function () { set("ok"); });
+      addBtn.addEventListener("click", addComment);
+      input.addEventListener("keydown", function (e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+          e.preventDefault();
+          addComment();
+        }
+      });
       hub.registerAnomalyRefresh(render);
       render();
     });
