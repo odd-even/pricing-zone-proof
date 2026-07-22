@@ -83,42 +83,21 @@
     display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
   }
   .theme-toggle {
-    --track-w: 51px;
-    --track-h: 31px;
-    --knob: 27px;
-    position: relative;
-    width: var(--track-w); height: var(--track-h);
-    padding: 0; border: none; border-radius: 999px;
-    background: #e9e9ea;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; padding: 0; margin: 0;
+    border: none; border-radius: 10px;
+    background: transparent; color: var(--text-secondary);
     cursor: pointer; flex-shrink: 0;
-    transition: background 0.25s ease;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
+    transition: background 0.15s, color 0.15s;
   }
-  .theme-toggle::before {
-    content: "";
-    position: absolute;
-    top: 2px; left: 2px;
-    width: var(--knob); height: var(--knob);
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.18), 0 1px 1px rgba(0,0,0,0.08);
-    transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+  .theme-toggle:hover { color: var(--text); background: rgba(0,0,0,0.05); }
+  html.dark .theme-toggle:hover { background: rgba(255,255,255,0.08); }
+  .theme-toggle svg {
+    width: 18px; height: 18px; display: block;
   }
-  .theme-toggle:active::before {
-    width: calc(var(--knob) + 3px);
-  }
-  html.dark .theme-toggle {
-    background: #34c759;
-    box-shadow: none;
-  }
-  html.dark .theme-toggle::before {
-    transform: translateX(20px);
-  }
-  html.dark .theme-toggle:active::before {
-    transform: translateX(17px);
-  }
-  .theme-toggle .icon-moon,
-  .theme-toggle .icon-sun { display: none; }
+  .theme-toggle .icon-moon { display: none; }
+  html.dark .theme-toggle .icon-sun { display: none; }
+  html.dark .theme-toggle .icon-moon { display: block; }
 
   h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 800; letter-spacing: -0.6px; line-height: 1.1; }
   .subtitle { color: var(--text-secondary); font-size: clamp(13px, 1.9vw, 16px); margin-top: 8px; line-height: 1.45; }
@@ -737,6 +716,15 @@ html.dark .data-table.heat .chg-up2 { color: #ffcc66; }
     <nav class="app-tabs" aria-label="Views">
       <a class="app-tab" data-tab="proof" href="#">Proof</a>
       <a class="app-tab" data-tab="checklist" href="#">Checklist</a>
+      <button type="button" class="theme-toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Toggle light and dark mode" title="Light mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 0 0 11.5 11.5z"/>
+        </svg>
+      </button>
     </nav>
     <div class="top-bar-actions">
       <button type="button" class="hdr-btn primary with-icon" id="viewScriptBtn">
@@ -748,7 +736,6 @@ html.dark .data-table.heat .chg-up2 { color: #ffcc66; }
         </svg>
         View InDesign script
       </button>
-      <button type="button" class="theme-toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Dark mode" title="Dark mode"></button>
     </div>
   </div>
   <header class="page-head">
@@ -1400,8 +1387,8 @@ html.dark .data-table.heat .chg-up2 { color: #ffcc66; }
     try { localStorage.setItem(KEY, theme); } catch (e) {}
     if (btn) {
       btn.setAttribute("aria-checked", theme === "dark" ? "true" : "false");
-      btn.setAttribute("aria-label", "Dark mode");
-      btn.title = theme === "dark" ? "Dark mode on" : "Dark mode off";
+      btn.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+      btn.title = theme === "dark" ? "Dark mode" : "Light mode";
     }
   }
   if (btn) {
