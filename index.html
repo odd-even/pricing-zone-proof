@@ -544,6 +544,16 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
     color: var(--text);
     box-shadow: 0 0 0 1px var(--separator);
   }
+  .comment-author.needs-author {
+    color: var(--accent);
+    background: rgba(8, 148, 255, 0.12);
+    box-shadow: 0 0 0 1.5px var(--accent);
+    animation: authorPulse 0.9s ease-in-out 2;
+  }
+  @keyframes authorPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
 
   .resolved-drawer {
     margin: -6px 0 28px;
@@ -1998,13 +2008,30 @@ window.JF_PROOF_SYNC = (function () {
       var savedAuthor = preferredAuthor();
       authorSel.value = savedAuthor || "";
       if (!authorSel.value) authorSel.selectedIndex = 0;
+      var pendingPost = false;
       function syncAuthorTitle() {
         authorWrap.title = authorSel.value ? ("Commenting as " + authorSel.value) : "Choose who is commenting";
+        authorWrap.classList.toggle("has-author", !!authorSel.value);
+      }
+      function promptAuthor() {
+        authorWrap.classList.add("needs-author");
+        authorWrap.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        authorSel.focus();
+        if (typeof authorSel.showPicker === "function") {
+          try { authorSel.showPicker(); } catch (e) {}
+        }
       }
       syncAuthorTitle();
       authorSel.addEventListener("change", function () {
-        if (authorSel.value) rememberAuthor(authorSel.value);
+        if (authorSel.value) {
+          rememberAuthor(authorSel.value);
+          authorWrap.classList.remove("needs-author");
+        }
         syncAuthorTitle();
+        if (pendingPost && authorSel.value) {
+          pendingPost = false;
+          addComment();
+        }
       });
       authorWrap.appendChild(authorSel);
 
@@ -2063,12 +2090,18 @@ window.JF_PROOF_SYNC = (function () {
       }
       function addComment() {
         var text = (input.value || "").replace(/^\s+|\s+$/g, "");
-        if (!text) return;
-        var by = authorSel.value;
-        if (AUTHORS.indexOf(by) < 0) {
-          authorSel.focus();
+        if (!text) {
+          input.focus();
           return;
         }
+        var by = authorSel.value;
+        if (AUTHORS.indexOf(by) < 0) {
+          pendingPost = true;
+          promptAuthor();
+          return;
+        }
+        pendingPost = false;
+        authorWrap.classList.remove("needs-author");
         rememberAuthor(by);
         var entry = readEntry(id);
         entry.comments.push({
