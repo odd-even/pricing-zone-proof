@@ -363,18 +363,20 @@
   .yoy-chip .arr { color: var(--text-secondary); margin: 0 3px; }
   .yoy-chip .to { font-weight: 700; }
   .yoy-chip .d { font-weight: 800; margin-left: 6px; }
-  .yoy-chip .d.up { color: #b8860b; }
-  .yoy-chip .d.down { color: var(--fail); }
-  @media (prefers-color-scheme: dark) { .yoy-chip .d.up { color: var(--warn); } }
   .yoy-pct { text-align: right; }
   .yoy-pct .num { font-size: 17px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.3px; }
-  .yoy-pct.up .num { color: #b8860b; }
-  .yoy-pct.down .num { color: var(--fail); }
-  @media (prefers-color-scheme: dark) { .yoy-pct.up .num { color: var(--warn); } }
-  .yoy-pct .bar { height: 4px; border-radius: 2px; margin-top: 5px; margin-left: auto; background: currentColor; opacity: 0.9; }
-  .yoy-pct.up .bar { background: #b8860b; }
-  .yoy-pct.down .bar { background: var(--fail); }
-  @media (prefers-color-scheme: dark) { .yoy-pct.up .bar { background: var(--warn); } }
+  .yoy-pct .bar-track {
+    height: 6px; border-radius: 999px; margin-top: 6px; margin-left: auto;
+    width: 100%; max-width: 88px;
+    background: rgba(60, 60, 67, 0.10);
+    overflow: hidden;
+  }
+  @media (prefers-color-scheme: dark) {
+    .yoy-pct .bar-track { background: rgba(255, 255, 255, 0.10); }
+  }
+  .yoy-pct .bar {
+    height: 100%; border-radius: 999px; min-width: 6px;
+  }
   .yoy-actions { display: flex; gap: 8px; justify-content: flex-end; }
   .yoy-btn {
     width: 36px; height: 36px; border-radius: 50%;
@@ -1162,6 +1164,47 @@
   function pct(a, b) { return Math.round((b / a - 1) * 100); }
   function money(v) { return "$" + v.toFixed(3); }
 
+  // Continuous heat: mild → hot by magnitude (not flat yellow/red).
+  function heat(p, dir) {
+    var abs = Math.abs(p);
+    var t = Math.min(1, abs / (dir === "up" ? 55 : 35));
+    t = Math.pow(t, 0.85);
+    var h, s, l;
+    if (dir === "up") {
+      // soft gold → amber → deep orange → hot red
+      h = 48 - t * 46;
+      s = 78 + t * 14;
+      l = 52 - t * 18;
+    } else {
+      // soft rose → coral → deep crimson
+      h = 8 - t * 8;
+      s = 70 + t * 22;
+      l = 58 - t * 22;
+    }
+    return "hsl(" + h.toFixed(1) + ", " + s.toFixed(0) + "%, " + l.toFixed(0) + "%)";
+  }
+  function heatSoft(p, dir) {
+    var abs = Math.abs(p);
+    var t = Math.min(1, abs / (dir === "up" ? 55 : 35));
+    if (dir === "up") {
+      return "hsla(" + (48 - t * 46).toFixed(1) + ", 90%, 55%, " + (0.12 + t * 0.22).toFixed(2) + ")";
+    }
+    return "hsla(" + (8 - t * 8).toFixed(1) + ", 90%, 55%, " + (0.10 + t * 0.22).toFixed(2) + ")";
+  }
+  function barGradient(p, dir) {
+    var abs = Math.abs(p);
+    var t = Math.min(1, abs / (dir === "up" ? 55 : 35));
+    var start, end;
+    if (dir === "up") {
+      start = "hsl(48, 85%, 58%)";
+      end = heat(p, dir);
+    } else {
+      start = "hsl(12, 80%, 62%)";
+      end = heat(p, dir);
+    }
+    return "linear-gradient(90deg, " + start + " 0%, " + end + " 100%)";
+  }
+
   function build(listEl, countEl, rows, dir) {
     var updaters = [];
 
@@ -1180,9 +1223,12 @@
       var key = dir + ":" + r.id;
       var worst = 0;
       r.sizes.forEach(function (s) { var p = pct(s[1], s[2]); if (Math.abs(p) > Math.abs(worst)) worst = p; });
+      var color = heat(worst, dir);
 
       var row = document.createElement("div");
       row.className = "yoy-row";
+      row.style.borderLeftColor = color;
+      row.style.borderLeftWidth = "3px";
 
       var item = document.createElement("div");
       item.className = "yoy-item";
@@ -1194,21 +1240,23 @@
         var p = pct(s[1], s[2]);
         var chip = document.createElement("span");
         chip.className = "yoy-chip";
+        chip.style.background = heatSoft(p, dir);
+        chip.style.borderColor = "transparent";
         chip.innerHTML =
           '<span class="sz">' + s[0] + "</span>" +
           '<span class="from">' + money(s[1]) + "</span>" +
           '<span class="arr">\u2192</span>' +
           '<span class="to">' + money(s[2]) + "</span>" +
-          '<span class="d ' + dir + '">' + (p > 0 ? "+" : "\u2212") + Math.abs(p) + "%</span>";
+          '<span class="d" style="color:' + heat(p, dir) + '">' + (p > 0 ? "+" : "\u2212") + Math.abs(p) + "%</span>";
         chips.appendChild(chip);
       });
 
       var pctEl = document.createElement("div");
       pctEl.className = "yoy-pct " + dir;
-      var barW = Math.min(100, Math.round(Math.abs(worst) / 60 * 100));
+      var barW = Math.min(100, Math.round(Math.abs(worst) / (dir === "up" ? 55 : 35) * 100));
       pctEl.innerHTML =
-        '<div class="num">' + (worst > 0 ? "+" : "\u2212") + Math.abs(worst) + "%</div>" +
-        '<div class="bar" style="width:' + barW + '%"></div>';
+        '<div class="num" style="color:' + color + '">' + (worst > 0 ? "+" : "\u2212") + Math.abs(worst) + "%</div>" +
+        '<div class="bar-track"><div class="bar" style="width:' + barW + '%;background:' + barGradient(worst, dir) + '"></div></div>';
 
       var actions = document.createElement("div");
       actions.className = "yoy-actions";
