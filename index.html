@@ -1171,10 +1171,10 @@
     t = Math.pow(t, 0.85);
     var h, s, l;
     if (dir === "up") {
-      // soft gold → amber → deep orange → hot red
-      h = 48 - t * 46;
-      s = 78 + t * 14;
-      l = 52 - t * 18;
+      // soft teal → blue-green → deep blue
+      h = 168 - t * 48;
+      s = 62 + t * 20;
+      l = 46 - t * 12;
     } else {
       // soft rose → coral → deep crimson
       h = 8 - t * 8;
@@ -1188,7 +1188,7 @@
     var t = Math.min(1, abs / (dir === "up" ? 55 : 35));
     var start, end;
     if (dir === "up") {
-      start = "hsl(48, 85%, 58%)";
+      start = "hsl(168, 70%, 48%)";
       end = heat(p, dir);
     } else {
       start = "hsl(12, 80%, 62%)";
