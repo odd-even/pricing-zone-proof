@@ -457,8 +457,7 @@
 
   <footer>
     <div class="sync-meta">
-      <p class="hint" id="syncStatus">Progress saves in this browser. Connect GitHub to share with the team.</p>
-      <button type="button" class="reset" id="syncSetupBtn">Connect GitHub sync</button>
+      <p class="hint" id="syncStatus">Connecting to shared checklist…</p>
     </div>
     <div class="footer-actions">
       <button class="reset" id="restoreBtn" style="display:none">Restore Removed</button>
@@ -467,6 +466,9 @@
   </footer>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script>
 (function () {
   var KEY = "jfTheme.v1";
@@ -1043,51 +1045,28 @@
     refresh();
   });
 
-  /* ===== GitHub shared state (last-write-wins) ===== */
-  var GH_OWNER = "Jolly-Farmer";
-  var GH_REPO = "pricing-zone-proof";
-  var GH_PATH = "checklist-state.json";
-  var GH_BRANCH = "main";
-  var GH_TOKEN_KEY = "pricingZoneChecklist.ghToken.v1";
-  var GH_NAME_KEY = "pricingZoneChecklist.ghName.v1";
-  var GH_API = "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO + "/contents/" + GH_PATH;
+  /* ===== Firebase shared state (seamless, last-write-wins) ===== */
+  var SYNC_PATH = "checklist";
   var syncStatusEl = document.getElementById("syncStatus");
-  var syncSetupBtn = document.getElementById("syncSetupBtn");
-  var remoteSha = null;
   var remoteUpdatedAt = null;
   var pushTimer = null;
   var pushing = false;
   var dirty = false;
   var applyingRemote = false;
+  var lastPushedAt = null;
+  var dbRef = null;
 
-  function getToken() {
-    try { return localStorage.getItem(GH_TOKEN_KEY) || ""; } catch (e) { return ""; }
-  }
-  function getDisplayName() {
-    try { return localStorage.getItem(GH_NAME_KEY) || ""; } catch (e) { return ""; }
-  }
   function setSyncStatus(msg, kind) {
     if (!syncStatusEl) return;
     syncStatusEl.textContent = msg;
     syncStatusEl.className = "hint" + (kind ? " " + kind : "");
-  }
-  function updateSetupButton() {
-    if (!syncSetupBtn) return;
-    syncSetupBtn.textContent = getToken() ? "Update GitHub sync" : "Connect GitHub sync";
-  }
-
-  function toBase64(str) {
-    return btoa(unescape(encodeURIComponent(str)));
-  }
-  function fromBase64(b64) {
-    return decodeURIComponent(escape(atob(b64)));
   }
 
   function getDoc() {
     return {
       v: 1,
       updatedAt: new Date().toISOString(),
-      updatedBy: getDisplayName() || null,
+      updatedBy: null,
       checks: state,
       customTasks: customTasks,
       removedTaskIds: removedTaskIds,
@@ -1124,104 +1103,6 @@
     }
   }
 
-  function authHeaders() {
-    var token = getToken();
-    var headers = {
-      "Accept": "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28"
-    };
-    if (token) headers.Authorization = "Bearer " + token;
-    return headers;
-  }
-
-  function fetchRemote() {
-    return fetch(GH_API + "?ref=" + encodeURIComponent(GH_BRANCH), {
-      headers: authHeaders(),
-      cache: "no-store"
-    }).then(function (res) {
-      if (res.status === 404) return { missing: true };
-      if (!res.ok) throw new Error("GitHub " + res.status);
-      return res.json();
-    }).then(function (data) {
-      if (data.missing) return { missing: true };
-      remoteSha = data.sha;
-      var doc = JSON.parse(fromBase64(data.content.replace(/\n/g, "")));
-      return { doc: doc, sha: data.sha };
-    });
-  }
-
-  function pushRemote() {
-    if (!getToken()) {
-      setSyncStatus("Connect GitHub sync so teammates can see your checks.", "warn");
-      return Promise.resolve();
-    }
-    if (pushing) {
-      dirty = true;
-      return Promise.resolve();
-    }
-    pushing = true;
-    dirty = false;
-    setSyncStatus("Saving to GitHub…");
-    var doc = getDoc();
-    var body = {
-      message: "Update checklist" + (doc.updatedBy ? " (" + doc.updatedBy + ")" : ""),
-      content: toBase64(JSON.stringify(doc, null, 2) + "\n"),
-      branch: GH_BRANCH
-    };
-    if (remoteSha) body.sha = remoteSha;
-
-    return fetch(GH_API, {
-      method: "PUT",
-      headers: Object.assign({ "Content-Type": "application/json" }, authHeaders()),
-      body: JSON.stringify(body)
-    }).then(function (res) {
-      if (res.status === 409 || res.status === 422) {
-        // Stale sha — refetch and overwrite (last write wins).
-        return fetchRemote().then(function () {
-          body.sha = remoteSha;
-          return fetch(GH_API, {
-            method: "PUT",
-            headers: Object.assign({ "Content-Type": "application/json" }, authHeaders()),
-            body: JSON.stringify(body)
-          });
-        });
-      }
-      return res;
-    }).then(function (res) {
-      if (!res.ok) {
-        return res.json().catch(function () { return {}; }).then(function (err) {
-          throw new Error((err && err.message) || ("GitHub " + res.status));
-        });
-      }
-      return res.json();
-    }).then(function (data) {
-      if (data && data.content && data.content.sha) remoteSha = data.content.sha;
-      remoteUpdatedAt = doc.updatedAt;
-      var who = doc.updatedBy ? " by " + doc.updatedBy : "";
-      setSyncStatus("Synced to GitHub" + who + " · " + new Date(doc.updatedAt).toLocaleString(), "ok");
-    }).catch(function (err) {
-      setSyncStatus("Sync failed: " + (err && err.message ? err.message : "unknown error"), "err");
-    }).finally(function () {
-      pushing = false;
-      if (dirty) queueSync();
-    });
-  }
-
-  function queueSync() {
-    if (applyingRemote) return;
-    dirty = true;
-    if (!getToken()) {
-      setSyncStatus("Saved locally. Connect GitHub sync to share with the team.", "warn");
-      return;
-    }
-    setSyncStatus("Saving…");
-    if (pushTimer) clearTimeout(pushTimer);
-    pushTimer = setTimeout(function () {
-      pushTimer = null;
-      pushRemote();
-    }, 700);
-  }
-
   function docHasContent(doc) {
     if (!doc) return false;
     if (doc.checks && Object.keys(doc.checks).length) return true;
@@ -1238,92 +1119,112 @@
       Object.keys(labelOverrides).length > 0 || Object.keys(colorOverrides).length > 0 || taskOrder.length > 0;
   }
 
-  function pullAndApply(isPoll) {
-    return fetchRemote().then(function (result) {
-      if (result.missing) {
-        if (getToken()) {
-          setSyncStatus("No shared file yet — will create it on your next change.", "warn");
-          if (!isPoll && localHasContent()) pushRemote();
-        } else {
-          setSyncStatus("Shared checklist not found yet. Connect GitHub sync to create it.", "warn");
-        }
-        return;
-      }
-      var doc = result.doc;
-      var incoming = doc && doc.updatedAt ? Date.parse(doc.updatedAt) : 0;
-      var known = remoteUpdatedAt ? Date.parse(remoteUpdatedAt) : 0;
-      if (isPoll && incoming && known && incoming <= known) return;
-      if (isPoll && dirty) return; // don't clobber an in-progress local edit
+  function parseRemote(val) {
+    if (!val) return null;
+    if (typeof val.body === "string") {
+      try { return JSON.parse(val.body); } catch (e) { return null; }
+    }
+    // Older/plain object shape
+    if (val.checks || val.customTasks || val.v) return val;
+    return null;
+  }
 
-      // First load: don't let an empty remote wipe local browser progress.
-      if (!isPoll && !docHasContent(doc) && localHasContent()) {
-        remoteUpdatedAt = doc.updatedAt || null;
-        setSyncStatus("Local checklist kept — remote file is empty. Saving will share it.", getToken() ? "warn" : "warn");
-        if (getToken()) pushRemote();
-        return;
-      }
-
-      applyDoc(doc);
-      var who = doc.updatedBy ? " by " + doc.updatedBy : "";
-      var when = doc.updatedAt ? " · " + new Date(doc.updatedAt).toLocaleString() : "";
-      setSyncStatus("Shared checklist loaded" + who + when, "ok");
+  function pushRemote() {
+    if (!dbRef) return Promise.resolve();
+    if (pushing) {
+      dirty = true;
+      return Promise.resolve();
+    }
+    pushing = true;
+    dirty = false;
+    setSyncStatus("Saving…");
+    var doc = getDoc();
+    lastPushedAt = doc.updatedAt;
+    return dbRef.set({
+      updatedAt: doc.updatedAt,
+      body: JSON.stringify(doc)
+    }).then(function () {
+      remoteUpdatedAt = doc.updatedAt;
+      setSyncStatus("Synced · " + new Date(doc.updatedAt).toLocaleString(), "ok");
     }).catch(function (err) {
-      if (!isPoll) {
-        setSyncStatus("Could not load shared checklist: " + (err && err.message ? err.message : "error") + ". Using local copy.", "err");
+      setSyncStatus("Sync failed: " + (err && err.message ? err.message : "unknown error"), "err");
+    }).finally(function () {
+      pushing = false;
+      if (dirty) queueSync();
+    });
+  }
+
+  function queueSync() {
+    if (applyingRemote) return;
+    dirty = true;
+    if (!dbRef) {
+      setSyncStatus("Saved in this browser only (Firebase not configured).", "warn");
+      return;
+    }
+    setSyncStatus("Saving…");
+    if (pushTimer) clearTimeout(pushTimer);
+    pushTimer = setTimeout(function () {
+      pushTimer = null;
+      pushRemote();
+    }, 400);
+  }
+
+  function handleRemoteValue(snap) {
+    var val = snap.val();
+    var doc = parseRemote(val);
+
+    if (!doc || !docHasContent(doc)) {
+      if (localHasContent()) {
+        setSyncStatus("Sharing your local checklist…", "warn");
+        pushRemote();
+      } else {
+        setSyncStatus("Shared checklist ready — changes sync live for everyone.", "ok");
       }
-    });
+      return;
+    }
+
+    // Ignore echo of our own write
+    if (doc.updatedAt && doc.updatedAt === lastPushedAt) {
+      remoteUpdatedAt = doc.updatedAt;
+      setSyncStatus("Synced · " + new Date(doc.updatedAt).toLocaleString(), "ok");
+      return;
+    }
+
+    // Don't clobber an in-flight local edit
+    if (dirty || pushing) return;
+
+    var incoming = doc.updatedAt ? Date.parse(doc.updatedAt) : 0;
+    var known = remoteUpdatedAt ? Date.parse(remoteUpdatedAt) : 0;
+    if (incoming && known && incoming <= known) return;
+
+    applyDoc(doc);
+    var when = doc.updatedAt ? " · " + new Date(doc.updatedAt).toLocaleString() : "";
+    setSyncStatus("Live sync on" + when, "ok");
   }
 
-  function setupSync() {
-    var currentName = getDisplayName();
-    var name = prompt("Your name (shown in sync status):", currentName || "");
-    if (name === null) return;
-    name = name.replace(/^\s+|\s+$/g, "");
-    try { if (name) localStorage.setItem(GH_NAME_KEY, name); } catch (e) {}
-
-    var currentToken = getToken();
-    var token = prompt(
-      "Paste a GitHub fine-grained token with Contents: Read and Write on Jolly-Farmer/pricing-zone-proof.\n\n" +
-      "Create one at: https://github.com/settings/personal-access-tokens/new\n\n" +
-      "Token stays in this browser only." +
-      (currentToken ? "\n\nLeave blank to keep the current token, or type CLEAR to remove it." : ""),
-      ""
-    );
-    if (token === null) {
-      updateSetupButton();
+  function startFirebaseSync() {
+    var cfg = window.JF_FIREBASE_CONFIG;
+    if (!cfg || !cfg.apiKey || !cfg.databaseURL || String(cfg.apiKey).indexOf("YOUR_") === 0) {
+      setSyncStatus("Saved in this browser only. Add firebase-config.js to enable team sync.", "warn");
       return;
     }
-    token = token.replace(/^\s+|\s+$/g, "");
-    if (token.toUpperCase() === "CLEAR") {
-      try { localStorage.removeItem(GH_TOKEN_KEY); } catch (e) {}
-      updateSetupButton();
-      setSyncStatus("GitHub sync disconnected. Progress still saves in this browser.", "warn");
+    if (typeof firebase === "undefined") {
+      setSyncStatus("Could not load Firebase. Check your network.", "err");
       return;
     }
-    if (token) {
-      try { localStorage.setItem(GH_TOKEN_KEY, token); } catch (e) {}
+    try {
+      if (!firebase.apps.length) firebase.initializeApp(cfg);
+      dbRef = firebase.database().ref(SYNC_PATH);
+      setSyncStatus("Connecting…");
+      dbRef.on("value", handleRemoteValue, function (err) {
+        setSyncStatus("Sync error: " + (err && err.message ? err.message : "connection failed"), "err");
+      });
+    } catch (err) {
+      setSyncStatus("Firebase setup error: " + (err && err.message ? err.message : "unknown"), "err");
     }
-    updateSetupButton();
-    if (!getToken()) {
-      setSyncStatus("No token saved. Anyone can still read the shared checklist if the repo is public.", "warn");
-      pullAndApply(false);
-      return;
-    }
-    setSyncStatus("Connected — syncing…");
-    pullAndApply(false).then(function () {
-      // If remote was empty/old and we have local checks, push once.
-      if (Object.keys(state).length || customTasks.length) pushRemote();
-    });
   }
 
-  if (syncSetupBtn) syncSetupBtn.addEventListener("click", setupSync);
-  updateSetupButton();
-  pullAndApply(false);
-  setInterval(function () {
-    if (document.hidden || dirty || pushing) return;
-    pullAndApply(true);
-  }, 8000);
-
+  startFirebaseSync();
   refresh();
 })();
 </script>
