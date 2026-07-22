@@ -159,19 +159,38 @@
   .fix .vals .exp { color: var(--pass); font-weight: 700; }
   .fix .vals .got { color: var(--fail); font-weight: 700; }
   .mini-table {
-    width: 100%; border-collapse: collapse; margin: 10px 0 4px;
-    font-size: 12px; font-variant-numeric: tabular-nums;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 12px 0 6px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    background: var(--card2);
+    border: 1px solid var(--separator);
+    border-radius: 12px;
   }
   .mini-table th, .mini-table td {
-    padding: 7px 8px; text-align: left; border-top: 1px solid var(--separator);
+    padding: 8px 14px;
+    text-align: left;
+    border-top: 1px solid var(--separator);
     vertical-align: middle;
   }
   .mini-table thead th {
-    border-top: none; border-bottom: 1px solid var(--separator);
-    font-size: 10px; font-weight: 700; letter-spacing: 0.4px;
-    text-transform: uppercase; color: var(--text-secondary); padding-top: 2px;
+    border-top: none;
+    background: rgba(60, 60, 67, 0.04);
+    font-size: 10px; font-weight: 700; letter-spacing: 0.45px;
+    text-transform: uppercase; color: var(--text-secondary);
+    padding-top: 9px; padding-bottom: 8px;
   }
-  .mini-table td:first-child, .mini-table th:first-child { padding-left: 0; font-weight: 650; color: var(--text); }
+  @media (prefers-color-scheme: dark) {
+    .mini-table thead th { background: rgba(255, 255, 255, 0.04); }
+  }
+  .mini-table thead tr:first-child th:first-child { border-top-left-radius: 11px; }
+  .mini-table thead tr:first-child th:last-child { border-top-right-radius: 11px; }
+  .mini-table tbody tr:last-child td:first-child { border-bottom-left-radius: 11px; }
+  .mini-table tbody tr:last-child td:last-child { border-bottom-right-radius: 11px; }
+  .mini-table thead + tbody tr:first-child td { border-top: 1px solid var(--separator); }
+  .mini-table td:first-child, .mini-table th:first-child { font-weight: 650; color: var(--text); }
   .mini-table td:not(:first-child), .mini-table th:not(:first-child) { text-align: right; }
   .mini-table tr.bad td { background: var(--fail-soft); }
   .mini-table tr.ok td { background: var(--pass-soft); }
