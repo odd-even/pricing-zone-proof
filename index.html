@@ -435,37 +435,11 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
   .fix.reviewed-ok { border-top-color: var(--pass); }
   .fix.reviewed-fix { border-top-color: var(--fail); }
 
-  .review-author {
-    margin-left: auto;
-    display: inline-flex; align-items: center; gap: 6px;
-    color: var(--text-secondary);
-    font-size: 11px; font-weight: 650;
-  }
-  .review-author label { white-space: nowrap; }
-  .review-author select {
-    font: inherit; font-size: 12px; font-weight: 700;
-    color: var(--text);
-    background: transparent;
-    border: none;
-    padding: 4px 2px;
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%238a8a8e' d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 2px center;
-    padding-right: 16px;
-  }
-  html.dark .review-author select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2398989e' d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
-  }
-  .review-author select:focus { outline: none; }
-
   .card-comments {
     margin-top: 8px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
   }
   .comment-list {
     display: flex; flex-direction: column; gap: 2px;
@@ -536,8 +510,39 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
   .comment-composer .add-comment:disabled {
     color: var(--text-secondary); opacity: 0.45; cursor: default;
   }
-  @media (max-width: 480px) {
-    .review-author { margin-left: 0; width: 100%; }
+
+  .comment-author {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    border-radius: 999px;
+    margin-top: 2px;
+  }
+  .comment-author:hover { color: var(--text); background: rgba(60, 60, 67, 0.06); }
+  html.dark .comment-author:hover { background: rgba(255, 255, 255, 0.06); }
+  .comment-author svg {
+    width: 16px; height: 16px;
+    pointer-events: none;
+  }
+  .comment-author select {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    font-size: 16px; /* iOS friendly */
+  }
+  .comment-author select:focus { outline: none; }
+  .comment-author:focus-within {
+    color: var(--text);
+    box-shadow: 0 0 0 1px var(--separator);
   }
 
   .resolved-drawer {
@@ -1841,7 +1846,7 @@ window.JF_PROOF_SYNC = (function () {
       var saved = localStorage.getItem(AUTHOR_KEY);
       if (saved && AUTHORS.indexOf(saved) >= 0) return saved;
     } catch (e) {}
-    return AUTHORS[0];
+    return "";
   }
 
   function rememberAuthor(name) {
@@ -1948,27 +1953,8 @@ window.JF_PROOF_SYNC = (function () {
       var btnOk = document.createElement("button");
       btnOk.className = "review-btn okasis";
       btnOk.textContent = "Looks Good";
-      var authorWrap = document.createElement("div");
-      authorWrap.className = "review-author";
-      var authorLabel = document.createElement("span");
-      authorLabel.textContent = "As";
-      var authorSel = document.createElement("select");
-      authorSel.setAttribute("aria-label", "Comment author");
-      AUTHORS.forEach(function (name) {
-        var opt = document.createElement("option");
-        opt.value = name;
-        opt.textContent = name;
-        authorSel.appendChild(opt);
-      });
-      authorSel.value = preferredAuthor();
-      authorSel.addEventListener("change", function () {
-        rememberAuthor(authorSel.value);
-      });
-      authorWrap.appendChild(authorLabel);
-      authorWrap.appendChild(authorSel);
       bar.appendChild(btnFix);
       bar.appendChild(btnOk);
-      bar.appendChild(authorWrap);
       card.appendChild(bar);
 
       var comments = document.createElement("div");
@@ -1987,8 +1973,44 @@ window.JF_PROOF_SYNC = (function () {
       addBtn.textContent = "Post";
       composer.appendChild(input);
       composer.appendChild(addBtn);
+
+      var authorWrap = document.createElement("div");
+      authorWrap.className = "comment-author";
+      authorWrap.innerHTML =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+          '<circle cx="12" cy="8" r="3.25"></circle>' +
+          '<path d="M5.5 19.5c1.6-3.2 4-4.8 6.5-4.8s4.9 1.6 6.5 4.8"></path>' +
+        "</svg>";
+      var authorSel = document.createElement("select");
+      authorSel.setAttribute("aria-label", "Comment author");
+      var placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "Who";
+      placeholder.disabled = true;
+      placeholder.hidden = true;
+      authorSel.appendChild(placeholder);
+      AUTHORS.forEach(function (name) {
+        var opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        authorSel.appendChild(opt);
+      });
+      var savedAuthor = preferredAuthor();
+      authorSel.value = savedAuthor || "";
+      if (!authorSel.value) authorSel.selectedIndex = 0;
+      function syncAuthorTitle() {
+        authorWrap.title = authorSel.value ? ("Commenting as " + authorSel.value) : "Choose who is commenting";
+      }
+      syncAuthorTitle();
+      authorSel.addEventListener("change", function () {
+        if (authorSel.value) rememberAuthor(authorSel.value);
+        syncAuthorTitle();
+      });
+      authorWrap.appendChild(authorSel);
+
       comments.appendChild(list);
       comments.appendChild(composer);
+      comments.appendChild(authorWrap);
       card.appendChild(comments);
 
       function renderCommentList() {
@@ -2043,7 +2065,10 @@ window.JF_PROOF_SYNC = (function () {
         var text = (input.value || "").replace(/^\s+|\s+$/g, "");
         if (!text) return;
         var by = authorSel.value;
-        if (AUTHORS.indexOf(by) < 0) by = AUTHORS[0];
+        if (AUTHORS.indexOf(by) < 0) {
+          authorSel.focus();
+          return;
+        }
         rememberAuthor(by);
         var entry = readEntry(id);
         entry.comments.push({
