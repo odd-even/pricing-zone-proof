@@ -716,12 +716,22 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
     min-height: 240px;
   }
   .yoy-zone-chart .yzc-yaxis {
-    display: flex; flex-direction: column; justify-content: space-between;
-    align-items: flex-end;
-    padding: 0 2px 28px 0;
+    position: relative;
     font-size: 11px; font-weight: 650; color: var(--text-secondary);
     font-variant-numeric: tabular-nums;
   }
+  .yoy-zone-chart .yzc-yaxis-plot {
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 28px;
+  }
+  .yoy-zone-chart .yzc-yaxis span {
+    position: absolute;
+    right: 2px;
+    transform: translateY(-50%);
+    line-height: 1;
+  }
+  .yoy-zone-chart .yzc-yaxis span:first-child { transform: translateY(0); }
+  .yoy-zone-chart .yzc-yaxis span:last-child { transform: translateY(-100%); }
   .yoy-zone-chart .yzc-yaxis .yzc-zero-tick {
     color: var(--text);
     font-weight: 800;
@@ -733,11 +743,10 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
   }
   .yoy-zone-chart .yzc-grid {
     position: absolute; left: 0; right: 0; top: 0; bottom: 28px;
-    display: flex; flex-direction: column; justify-content: space-between;
     pointer-events: none;
   }
   .yoy-zone-chart .yzc-grid span {
-    display: block; width: 100%; height: 0;
+    position: absolute; left: 0; right: 0; height: 0;
     border-top: 1px dashed var(--separator);
   }
   .yoy-zone-chart .yzc-zero {
@@ -1393,13 +1402,10 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
       <div class="yzc-caption">Source: genus + tray size + SAU matches to 2026 TXT (n=8,210). Zone E stands alone.</div>
       <div class="yzc-plot">
         <div class="yzc-yaxis" aria-hidden="true">
-          <span>20%</span>
-          <span>10%</span>
-          <span class="yzc-zero-tick">0%</span>
-          <span>&minus;5%</span>
+          <div class="yzc-yaxis-plot" id="yoyZoneAxis"></div>
         </div>
         <div class="yzc-stage">
-          <div class="yzc-grid" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+          <div class="yzc-grid" id="yoyZoneGrid" aria-hidden="true"></div>
           <div class="yzc-bars" id="yoyZoneBars"></div>
           <div class="yzc-labels" id="yoyZoneLabels" aria-hidden="true"></div>
         </div>
@@ -2323,9 +2329,12 @@ window.JF_PROOF_SYNC = (function () {
   var YMAX = 20;
   var YMIN = -5;
   var RANGE = YMAX - YMIN;
+  var TICKS = [20, 10, 0, -5];
+  var axis = document.getElementById("yoyZoneAxis");
+  var grid = document.getElementById("yoyZoneGrid");
   var bars = document.getElementById("yoyZoneBars");
   var labels = document.getElementById("yoyZoneLabels");
-  if (!bars || !labels) return;
+  if (!bars || !labels || !axis || !grid) return;
 
   function topPct(v) {
     return ((YMAX - v) / RANGE) * 100;
@@ -2333,6 +2342,26 @@ window.JF_PROOF_SYNC = (function () {
   function heightPct(v) {
     return (Math.abs(v) / RANGE) * 100;
   }
+  function tickLabel(v) {
+    if (v === 0) return "0%";
+    if (v > 0) return v + "%";
+    return "\u2212" + Math.abs(v) + "%";
+  }
+
+  TICKS.forEach(function (v, i) {
+    var top = topPct(v) + "%";
+    var tick = document.createElement("span");
+    tick.style.top = top;
+    tick.textContent = tickLabel(v);
+    if (v === 0) tick.className = "yzc-zero-tick";
+    if (i === 0) tick.style.transform = "translateY(0)";
+    if (i === TICKS.length - 1) tick.style.transform = "translateY(-100%)";
+    axis.appendChild(tick);
+
+    var line = document.createElement("span");
+    line.style.top = top;
+    grid.appendChild(line);
+  });
 
   var zero = document.createElement("div");
   zero.className = "yzc-zero";
