@@ -115,7 +115,7 @@
 
   h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 800; letter-spacing: -0.6px; line-height: 1.1; }
   .subtitle { color: var(--text-secondary); font-size: clamp(13px, 1.9vw, 16px); margin-top: 8px; line-height: 1.45; }
-  .sync-status { font-size: 13px; color: var(--text-secondary); margin-top: 8px; }
+  .sync-status { font-size: 13px; color: var(--text-secondary); margin-top: 18px; }
   .sync-status.ok { color: var(--pass); }
   .sync-status.warn { color: var(--warn); }
   .sync-status.err { color: var(--fail); }
@@ -986,7 +986,6 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
     <div class="page-head-text">
       <h1>2027 Pricing Zone Proof</h1>
       <p class="subtitle">A visual check of the 2027 zone catalogs against the source price file, freight sheet, and last year&rsquo;s books.</p>
-      <p class="sync-status" id="proofSyncStatus">Connecting to shared reviews&hellip;</p>
     </div>
   </header>
 
@@ -1668,6 +1667,7 @@ html.dark .zonetag.z-liners { color: #dfa2ff; }
     <b>Note:</b> discounts/shipping pages still carry invisible white "Live Data Here / USA ONLY" slug text in the PDF text layer &mdash; harmless for print, worth cleaning in the masters eventually.<br>
     Sources: Proof/Finished PDF (GR1 ZONE *_R2) &middot; Proof/2026 (imports + GR1 ZONE PDFs) &middot; X3 Pricing Artroom export Update R3.xlsx &middot; ws 2027.pdf
   </footer>
+  <p class="sync-status" id="proofSyncStatus">Connecting to shared reviews&hellip;</p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
