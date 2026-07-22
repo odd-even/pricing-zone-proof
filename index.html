@@ -62,15 +62,25 @@
     margin-bottom: 22px; flex-wrap: wrap;
   }
   .app-tabs {
-    display: inline-flex; align-items: center; gap: 4px;
+    display: inline-flex; align-items: center; gap: 6px;
     padding: 4px; margin: 0;
     background: var(--card); border: 1px solid var(--separator);
     border-radius: 14px;
   }
+  .app-tab-group {
+    display: inline-flex; align-items: center; gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--separator);
+    border-radius: 11px;
+    background: rgba(0,0,0,0.03);
+  }
+  html.dark .app-tab-group {
+    background: rgba(255,255,255,0.05);
+  }
   .app-tab {
     display: inline-flex; align-items: center; justify-content: center;
     font: inherit; font-size: 13px; font-weight: 700; line-height: 1;
-    padding: 8px 16px; border-radius: 10px;
+    padding: 7px 14px; border-radius: 9px;
     color: var(--text-secondary); text-decoration: none;
     transition: background 0.15s, color 0.15s;
   }
@@ -715,8 +725,10 @@ html.dark .data-table.heat .chg-up2 { color: #ffcc66; }
 <div class="wrap">
   <div class="top-bar">
     <nav class="app-tabs" aria-label="Views">
-      <a class="app-tab" data-tab="proof" href="#">Proof</a>
-      <a class="app-tab" data-tab="checklist" href="#">Checklist</a>
+      <div class="app-tab-group" role="group" aria-label="Page">
+        <a class="app-tab" data-tab="proof" href="#">Proof</a>
+        <a class="app-tab" data-tab="checklist" href="#">Checklist</a>
+      </div>
       <button type="button" class="theme-toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Toggle light and dark mode" title="Light mode">
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="4"/>
