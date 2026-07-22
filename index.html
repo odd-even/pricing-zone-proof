@@ -153,10 +153,32 @@
   .fix.warnfix .zonetag { background: var(--warn-soft); color: #b8860b; }
   @media (prefers-color-scheme: dark) { .fix.warnfix .zonetag { color: var(--warn); } }
   .fix p { font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
+  .fix p + p { margin-top: 8px; }
   .fix .vals { margin-top: 8px; font-size: 13px; font-variant-numeric: tabular-nums; }
   .fix .vals b { font-weight: 700; }
   .fix .vals .exp { color: var(--pass); font-weight: 700; }
   .fix .vals .got { color: var(--fail); font-weight: 700; }
+  .mini-table {
+    width: 100%; border-collapse: collapse; margin: 10px 0 4px;
+    font-size: 12px; font-variant-numeric: tabular-nums;
+  }
+  .mini-table th, .mini-table td {
+    padding: 7px 8px; text-align: left; border-top: 1px solid var(--separator);
+    vertical-align: middle;
+  }
+  .mini-table thead th {
+    border-top: none; border-bottom: 1px solid var(--separator);
+    font-size: 10px; font-weight: 700; letter-spacing: 0.4px;
+    text-transform: uppercase; color: var(--text-secondary); padding-top: 2px;
+  }
+  .mini-table td:first-child, .mini-table th:first-child { padding-left: 0; font-weight: 650; color: var(--text); }
+  .mini-table td:not(:first-child), .mini-table th:not(:first-child) { text-align: right; }
+  .mini-table tr.bad td { background: var(--fail-soft); }
+  .mini-table tr.ok td { background: var(--pass-soft); }
+  .mini-table tr.watch td { background: var(--warn-soft); }
+  .mini-table .fail-txt { color: var(--fail); font-weight: 700; }
+  .mini-table .pass-txt { color: var(--pass); font-weight: 700; }
+  .mini-table .muted { color: var(--text-secondary); font-weight: 500; }
 
   /* ===== Review controls ===== */
   .review-bar {
@@ -407,123 +429,230 @@
   </div>
   <div class="fixes" data-review-group="data">
     <div class="fix">
-      <h3><span class="zonetag">ALL ZONES</span> Erysimum Brightside Magenta Glow = $0.10</h3>
-      <p>Perennials, 51-strip &mdash; the leading "1" got dropped:</p>
-      <div class="vals">
-        2026 price &nbsp;&nbsp;<span class="exp">$1.020</span><br>
-        2027 price &nbsp;&nbsp;<span class="got">$0.100</span> &nbsp;(sibling Brightside Orange: $0.943)<br>
-        Expected &nbsp;&nbsp;<span class="exp">~$1.05</span> with a normal increase
-      </div>
-      <p>Also the only item in the file where levels flatten (L3=L4=L5).</p>
+      <h3><span class="zonetag">ALL ZONES</span> Erysimum Magenta Glow looks like a dropped digit</h3>
+      <p>Brightside Magenta Glow 51-strip fell from about a dollar to ten cents. Sibling Brightside Orange is still near a dollar.</p>
+      <table class="mini-table">
+        <thead><tr><th></th><th>Price</th></tr></thead>
+        <tbody>
+          <tr class="ok"><td>2026 Magenta Glow</td><td class="pass-txt">$1.020</td></tr>
+          <tr class="bad"><td>2027 Magenta Glow</td><td class="fail-txt">$0.100</td></tr>
+          <tr><td>Sibling Orange (2027)</td><td>$0.943</td></tr>
+          <tr class="ok"><td>Expected with a normal bump</td><td class="pass-txt">~$1.05</td></tr>
+        </tbody>
+      </table>
+      <p>Also the only item where volume levels flatten (L3 = L4 = L5).</p>
     </div>
     <div class="fix okfix">
-      <h3><span class="zonetag">RESOLVED</span> 256-tray pricing near 512 rates &mdash; intentional</h3>
-      <p>A <b>256</b> is a 512 tray cut in half manually near the end of its production cycle &mdash; same small plugs, half the count &mdash; so it prices just above 512 per-plant rates. The 2026 files labeled this size <b>"Half-512"</b>. Same basis both years (Ageratum):</p>
-      <div class="vals">
-        2026 &nbsp;&nbsp;512 = $0.103 &nbsp;&middot;&nbsp; Half-512 = $0.120<br>
-        2027 &nbsp;&nbsp;512 = $0.103 &nbsp;&middot;&nbsp; 256 = $0.127
-      </div>
+      <h3><span class="zonetag">RESOLVED</span> 256 trays price near 512 &mdash; intentional</h3>
+      <p>A 256 is a 512 tray cut in half late in production. Same small plugs, half the count, so it prices just above 512. 2026 called this size &ldquo;Half-512.&rdquo;</p>
+      <table class="mini-table">
+        <thead><tr><th>Ageratum</th><th>512</th><th>256 / Half-512</th></tr></thead>
+        <tbody>
+          <tr><td>2026</td><td>$0.103</td><td>$0.120</td></tr>
+          <tr class="ok"><td>2027</td><td>$0.103</td><td class="pass-txt">$0.127</td></tr>
+        </tbody>
+      </table>
     </div>
     <div class="fix warnfix">
-      <h3><span class="zonetag">ZONE 3</span> Cheaper than Zone 2 &mdash; new this year</h3>
-      <p>96.5% of items (and all 120 combos) are ~0.8% <b>cheaper in Zone 3 than Zone 2</b>. <b>In 2026 this was not the case</b>: Zone 3 averaged +0.5% above Zone 2 with zero cheaper items. The flip is new in 2027 &mdash; confirm the zone rate table is intentional.</p>
+      <h3><span class="zonetag">ZONE 3</span> Zone 3 is cheaper than Zone 2 &mdash; new this year</h3>
+      <p>Almost every item and every combo is slightly cheaper in Zone 3 than Zone 2. That flip did not exist in 2026.</p>
+      <table class="mini-table">
+        <thead><tr><th></th><th>2026</th><th>2027</th></tr></thead>
+        <tbody>
+          <tr class="ok"><td>Zone 3 vs Zone 2</td><td class="pass-txt">+0.5% (normal)</td><td class="fail-txt">&minus;0.8% (flipped)</td></tr>
+          <tr><td>Items cheaper in Zone 3</td><td>0</td><td class="fail-txt">96.5%</td></tr>
+          <tr><td>Combos cheaper in Zone 3</td><td>0</td><td class="fail-txt">all 120</td></tr>
+        </tbody>
+      </table>
+      <p>Confirm the zone rate table is intentional.</p>
     </div>
     <div class="fix warnfix">
-      <h3><span class="zonetag">ALL ZONES</span> EOD math changed vs 2026 &mdash; wording now overstates it</h3>
-      <p>2027 builds regular price as <b>EOD &times; 1.1</b>, which makes the discount 9.09% off regular. <b>2026 was a true 10%</b> (EOD = regular &times; 0.9, exact across 5,675 rows). The numbers are self-consistent, but the Discounts page still says "billed at 10% off the regular price" &mdash; that was literally true last year and isn't now.</p>
+      <h3><span class="zonetag">ALL ZONES</span> EOD discount is no longer a true 10%</h3>
+      <p>The math changed, but the Discounts page still says &ldquo;10% off.&rdquo;</p>
+      <table class="mini-table">
+        <thead><tr><th></th><th>How it&rsquo;s built</th><th>Actual discount</th></tr></thead>
+        <tbody>
+          <tr class="ok"><td>2026</td><td>EOD = regular &times; 0.9</td><td class="pass-txt">exact 10%</td></tr>
+          <tr class="watch"><td>2027</td><td>regular = EOD &times; 1.1</td><td class="fail-txt">9.09%</td></tr>
+        </tbody>
+      </table>
+      <p>Numbers are self-consistent &mdash; only the wording is now wrong.</p>
     </div>
     <div class="fix okfix">
-      <h3><span class="zonetag">RESOLVED</span> Discounts-page sample table &mdash; static by design</h3>
-      <p>The 2026 catalogs did the same thing: one example item (Ageratum Aloha Blue, Zone&nbsp;E-level numbers) identical in all 10 PDFs. The sample is a static illustration of how to read the table, not live zone data. 2027 continues the pattern with Ageratum Kona.</p>
+      <h3><span class="zonetag">RESOLVED</span> Discounts sample table is static on purpose</h3>
+      <p>One example item is shown in every zone PDF to explain how to read the table &mdash; not live zone pricing. 2026 used Ageratum Aloha Blue; 2027 uses Ageratum Kona the same way.</p>
     </div>
     <div class="fix warnfix">
-      <h3><span class="zonetag">ALL ZONES</span> Steep zone curve &mdash; two different stories</h3>
-      <p><b>New in 2027</b> (followed the normal curve last year; now Z6/Z2 ≈ 1.48–1.51 vs file median 1.20):</p>
-      <div class="vals">
-        Cosmos Sensation Mix 144 &nbsp;&nbsp;Z6/Z2 = 1.51 &nbsp;&middot;&nbsp; ZE/Z2 = 3.38<br>
-        Cilantro Santo 144 &nbsp;&nbsp;Z6/Z2 = 1.50<br>
-        Basil Amethyst / Nufar / Dolce Fresca / Prospera 144 &nbsp;&nbsp;Z6/Z2 = 1.48<br>
-        Dill Dukat / Fernleaf 144 &nbsp;&nbsp;Z6/Z2 = 1.48
-      </div>
-      <p><b>Carry-over, slightly steeper</b> &mdash; French Marigolds were already on a high zone ladder in 2026 (~1.40) and nudged up further:</p>
-      <div class="vals">
-        Super Hero 144 &nbsp;&nbsp;1.41 → 1.45<br>
-        Durango 144 &nbsp;&nbsp;1.41 → 1.44<br>
-        Bonanza 144 &nbsp;&nbsp;1.40 → 1.43
-      </div>
-      <p>African Marigolds (Antigua / Inca / Taishan) stay nearer normal (~1.37). The herb/Cosmos group looks like a wrong rate class; the French Marigolds look like an intentional (and intensifying) ladder.</p>
+      <h3><span class="zonetag">ALL ZONES</span> Some items climb zones much too steeply</h3>
+      <p>Most of the file sits near a Zone 6 / Zone 2 ratio of <b>1.20</b>. These jumped to ~1.50.</p>
+      <table class="mini-table">
+        <thead><tr><th>Item (144)</th><th>Z6 / Z2</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr class="bad"><td>Cosmos Sensation Mix</td><td class="fail-txt">1.51</td><td class="muted">new this year</td></tr>
+          <tr class="bad"><td>Cilantro Santo</td><td class="fail-txt">1.50</td><td class="muted">new this year</td></tr>
+          <tr class="bad"><td>Basil (4 varieties)</td><td class="fail-txt">1.48</td><td class="muted">new this year</td></tr>
+          <tr class="bad"><td>Dill Dukat / Fernleaf</td><td class="fail-txt">1.48</td><td class="muted">new this year</td></tr>
+          <tr class="watch"><td>French Marigold Super Hero</td><td>1.45</td><td class="muted">was 1.41 in 2026</td></tr>
+          <tr class="watch"><td>French Marigold Durango</td><td>1.44</td><td class="muted">was 1.41</td></tr>
+          <tr class="watch"><td>French Marigold Bonanza</td><td>1.43</td><td class="muted">was 1.40</td></tr>
+          <tr class="ok"><td>Typical item</td><td class="pass-txt">~1.20</td><td class="muted">file median</td></tr>
+        </tbody>
+      </table>
+      <p>Herbs and Cosmos look mis-classed. French Marigolds look like an intentional steep ladder that got a bit steeper.</p>
     </div>
     <div class="fix warnfix">
-      <h3><span class="zonetag">ZONE E</span> +19% across the board vs 2026 &mdash; every other zone is &minus;1% to +6%</h3>
-      <p>Zone E items went up a median <b>+19.3%</b> and combos <b>+19.9%</b> year-over-year, while zones 2&ndash;D range from &minus;1.4% (D) to +5.9% (6). The E/D price gap widened from 1.09&times; to <b>1.30&times;</b>. If Newfoundland/remote freight drove a deliberate reprice, fine &mdash; but it's a big, uniform jump worth confirming.</p>
+      <h3><span class="zonetag">ZONE E</span> Zone E jumped ~19% while other zones barely moved</h3>
+      <p>Every other zone is between about &minus;1% and +6%. Zone E stands alone.</p>
+      <table class="mini-table">
+        <thead><tr><th></th><th>Zones 2&ndash;D</th><th>Zone E</th></tr></thead>
+        <tbody>
+          <tr><td>Items (median YoY)</td><td>&minus;1% to +6%</td><td class="fail-txt">+19.3%</td></tr>
+          <tr><td>Combos (median YoY)</td><td>&minus;1% to +6%</td><td class="fail-txt">+19.9%</td></tr>
+          <tr class="watch"><td>E / D price gap</td><td>1.09&times; in 2026</td><td class="fail-txt">1.30&times; in 2027</td></tr>
+        </tbody>
+      </table>
+      <p>Fine if remote freight drove a deliberate reprice &mdash; worth confirming because the jump is big and uniform.</p>
     </div>
     <div class="fix">
-      <h3><span class="zonetag">ALL ZONES</span> Aster 288 &amp; 512 jumped +56% / +43% while the 144 went +8%</h3>
-      <p>The bulk sizes moved way out of line with the 144:</p>
-      <div class="vals">
-        144 &nbsp;&nbsp;$0.274 &rarr; $0.296 &nbsp;<span class="exp">+8%</span><br>
-        288 &nbsp;&nbsp;$0.159 &rarr; $0.248 &nbsp;<span class="got">+56%</span><br>
-        512 &nbsp;&nbsp;$0.081 &rarr; $0.116 &nbsp;<span class="got">+43%</span>
-      </div>
-      <p>That puts the 288 at 0.84&times; the 144 price per plant &mdash; the category norm is 0.57&times;, and 2026's Aster was a normal 0.58&times;. Matsumoto 288 shows the same pattern. The bulk-size prices look inflated.</p>
+      <h3><span class="zonetag">ALL ZONES</span> Aster bulk sizes jumped; the 144 barely moved</h3>
+      <p>The 288 and 512 look inflated relative to the 144 (and relative to 2026).</p>
+      <table class="mini-table">
+        <thead><tr><th>Size</th><th>2026</th><th>2027</th><th>Change</th></tr></thead>
+        <tbody>
+          <tr class="ok"><td>144</td><td>$0.274</td><td>$0.296</td><td class="pass-txt">+8%</td></tr>
+          <tr class="bad"><td>288</td><td>$0.159</td><td>$0.248</td><td class="fail-txt">+56%</td></tr>
+          <tr class="bad"><td>512</td><td>$0.081</td><td>$0.116</td><td class="fail-txt">+43%</td></tr>
+        </tbody>
+      </table>
+      <table class="mini-table">
+        <thead><tr><th>288 vs 144 per plant</th><th>Ratio</th></tr></thead>
+        <tbody>
+          <tr class="ok"><td>Category norm / 2026 Aster</td><td class="pass-txt">~0.57&ndash;0.58&times;</td></tr>
+          <tr class="bad"><td>2027 Aster</td><td class="fail-txt">0.84&times;</td></tr>
+        </tbody>
+      </table>
+      <p>Matsumoto 288 shows the same pattern.</p>
     </div>
     <div class="fix">
-      <h3><span class="zonetag">ALL ZONES</span> Pepper Cayenne Long Thin &mdash; 144 jumped +28% while 288 fell &minus;6%</h3>
-      <p>Sizes of the same variety moved in opposite directions, breaking the size curve:</p>
-      <div class="vals">
-        144 &nbsp;&nbsp;$0.331 &rarr; $0.425 &nbsp;<span class="got">+28%</span><br>
-        288 &nbsp;&nbsp;$0.188 &rarr; $0.177 &nbsp;<span class="exp">&minus;6%</span><br>
-        256 &nbsp;&nbsp;$0.124 &rarr; $0.124 &nbsp;(flat)<br>
-        512 &nbsp;&nbsp;$0.108 &rarr; $0.108 &nbsp;(flat)
-      </div>
-      <p>The 144/288 ratio went from a normal <b>1.76</b> to <b>2.40</b> &mdash; the largest size-ratio shift of any matched vegetable. Either the 144 is too high now, or the bulk trays didn't get the same reprice.</p>
+      <h3><span class="zonetag">ALL ZONES</span> Cayenne Long Thin sizes moved in opposite directions</h3>
+      <p>Same pepper, different trays: the 144 went up hard while the 288 went down.</p>
+      <table class="mini-table">
+        <thead><tr><th>Size</th><th>2026</th><th>2027</th><th>Change</th></tr></thead>
+        <tbody>
+          <tr class="bad"><td>144</td><td>$0.331</td><td>$0.425</td><td class="fail-txt">+28%</td></tr>
+          <tr class="ok"><td>288</td><td>$0.188</td><td>$0.177</td><td class="pass-txt">&minus;6%</td></tr>
+          <tr><td>256</td><td>$0.124</td><td>$0.124</td><td class="muted">flat</td></tr>
+          <tr><td>512</td><td>$0.108</td><td>$0.108</td><td class="muted">flat</td></tr>
+        </tbody>
+      </table>
+      <table class="mini-table">
+        <thead><tr><th>144 / 288 ratio</th><th></th></tr></thead>
+        <tbody>
+          <tr class="ok"><td>2026</td><td class="pass-txt">1.76</td></tr>
+          <tr class="bad"><td>2027</td><td class="fail-txt">2.40</td></tr>
+        </tbody>
+      </table>
+      <p>Largest size-ratio shift of any matched vegetable. Either the 144 is too high, or the bulk trays missed the reprice.</p>
     </div>
     <div class="fix">
-      <h3><span class="zonetag">ALL ZONES</span> Lobelia Premium Masterpiece &mdash; 26-strip is 2.3&times; off its own curve</h3>
-      <p>Masterpiece Blue with Eye:</p>
-      <div class="vals">
-        288 &nbsp;&nbsp;$0.259 &nbsp;<span class="exp">tracks 2026 (+9%)</span><br>
-        144 &nbsp;&nbsp;$0.435 &nbsp;<span class="exp">tracks 2026 (+4%)</span><br>
-        26 &nbsp;&nbsp;&nbsp;<span class="got">$1.967</span> &nbsp;new size for 2027 &mdash; expected <span class="exp">~$0.84</span> if the 144 is right
-      </div>
-      <p>Across 379 items the 26/144 ratio medians <b>1.93</b> (next-highest is 2.45); this one is <b>4.52</b>. The 26-strip is a newly added item number (G037412) and its price doesn't fit the family.</p>
+      <h3><span class="zonetag">ALL ZONES</span> Lobelia Masterpiece 26-strip is way off its own curve</h3>
+      <p>The 144 and 288 track 2026. The new 26-strip does not.</p>
+      <table class="mini-table">
+        <thead><tr><th>Size</th><th>2027 price</th><th></th></tr></thead>
+        <tbody>
+          <tr class="ok"><td>288</td><td>$0.259</td><td class="pass-txt">tracks 2026 (+9%)</td></tr>
+          <tr class="ok"><td>144</td><td>$0.435</td><td class="pass-txt">tracks 2026 (+4%)</td></tr>
+          <tr class="bad"><td>26 (new)</td><td class="fail-txt">$1.967</td><td class="fail-txt">expected ~$0.84</td></tr>
+        </tbody>
+      </table>
+      <table class="mini-table">
+        <thead><tr><th>26 / 144 ratio</th><th></th></tr></thead>
+        <tbody>
+          <tr class="ok"><td>Typical (379 items)</td><td class="pass-txt">1.93 median</td></tr>
+          <tr class="bad"><td>Masterpiece</td><td class="fail-txt">4.52</td></tr>
+        </tbody>
+      </table>
+      <p>New item number G037412 &mdash; price doesn&rsquo;t fit the family.</p>
     </div>
     <div class="fix warnfix">
-      <h3><span class="zonetag">ALL ZONES</span> Tomato Empress &mdash; priciest veg, flattest curve (new item)</h3>
-      <p>26-strip at <b>$2.67</b> (next tomato is ~$1.03) with the shallowest volume curve in Vegetables (L5/L1&nbsp;=&nbsp;0.87 vs 0.75 median). Not in the 2026 files, so there's no prior-year anchor &mdash; fine if it's genuinely a premium line, worth one look.</p>
+      <h3><span class="zonetag">ALL ZONES</span> Tomato Empress is the priciest veg, with the flattest curve</h3>
+      <p>New item this year, so there&rsquo;s no 2026 anchor. Fine if it&rsquo;s a true premium line &mdash; worth one look.</p>
+      <table class="mini-table">
+        <thead><tr><th></th><th>Empress</th><th>Typical tomato</th></tr></thead>
+        <tbody>
+          <tr class="watch"><td>26-strip price</td><td class="fail-txt">$2.67</td><td>~$1.03</td></tr>
+          <tr class="watch"><td>Volume curve (L5 / L1)</td><td>0.87</td><td>0.75 median</td></tr>
+        </tbody>
+      </table>
     </div>
     <div class="fix warnfix">
-      <h3><span class="zonetag">ALL ZONES</span> Helianthus Sunfinity / Always Sunny &mdash; 3&times; the family, flattest annuals curve</h3>
-      <p>Within Helianthus 144s: Sunbuzz $0.351, Suntastic $0.462, but Always Sunny Gold <b>$1.092</b> and Sunfinity <b>$1.187</b> (z = +5.5 vs Annuals 144 mean). Same varieties also have the flattest L5/L1 in Annuals (0.90 vs median 0.76). Likely intentional premium genetics &mdash; but they sit in the same outlier signature as Erysimum, so worth confirming they're supposed to be that far above the rest of the genus.</p>
+      <h3><span class="zonetag">ALL ZONES</span> Helianthus Sunfinity sits far above the rest of the family</h3>
+      <p>Within Helianthus 144s, two varieties are about 3&times; the others. Same pattern as Erysimum &mdash; likely premium genetics, but confirm.</p>
+      <table class="mini-table">
+        <thead><tr><th>Helianthus 144</th><th>Price</th></tr></thead>
+        <tbody>
+          <tr><td>Sunbuzz</td><td>$0.351</td></tr>
+          <tr><td>Suntastic</td><td>$0.462</td></tr>
+          <tr class="bad"><td>Always Sunny Gold</td><td class="fail-txt">$1.092</td></tr>
+          <tr class="bad"><td>Sunfinity</td><td class="fail-txt">$1.187</td></tr>
+        </tbody>
+      </table>
+      <p>They also have the flattest volume curve in Annuals (L5/L1 = 0.90 vs median 0.76).</p>
     </div>
     <div class="fix warnfix">
-      <h3><span class="zonetag">ALL ZONES</span> Cilantro 288 dropped &minus;27% while its 144 stayed flat</h3>
-      <p>Another size-curve break (same signature as Cayenne):</p>
-      <div class="vals">
-        144 &nbsp;&nbsp;$0.222 &rarr; $0.220 &nbsp;(~flat)<br>
-        288 &nbsp;&nbsp;$0.143 &rarr; $0.105 &nbsp;<span class="got">&minus;27%</span>
-      </div>
-      <p>144/288 ratio went 1.55 &rarr; <b>2.10</b>. Combined with the steep zone ladder above, Cilantro looks mis-keyed on more than one axis.</p>
+      <h3><span class="zonetag">ALL ZONES</span> Cilantro 288 dropped while the 144 stayed flat</h3>
+      <p>Same size-curve break as Cayenne. Cilantro also sits on the steep zone ladder above.</p>
+      <table class="mini-table">
+        <thead><tr><th>Size</th><th>2026</th><th>2027</th><th>Change</th></tr></thead>
+        <tbody>
+          <tr><td>144</td><td>$0.222</td><td>$0.220</td><td class="muted">~flat</td></tr>
+          <tr class="bad"><td>288</td><td>$0.143</td><td>$0.105</td><td class="fail-txt">&minus;27%</td></tr>
+        </tbody>
+      </table>
+      <table class="mini-table">
+        <thead><tr><th>144 / 288 ratio</th><th></th></tr></thead>
+        <tbody>
+          <tr class="ok"><td>2026</td><td class="pass-txt">1.55</td></tr>
+          <tr class="bad"><td>2027</td><td class="fail-txt">2.10</td></tr>
+        </tbody>
+      </table>
     </div>
     <div class="fix warnfix">
-      <h3><span class="zonetag">LINERS</span> Rose Sunrosa &mdash; compressed Canada zone ladder</h3>
-      <p>Sunrosa 26-strip ZE/ZD = <b>1.13</b> (Liners median 1.32, z = −4.1). Zone ladder is almost flat through the CA zones:</p>
-      <div class="vals">
-        Z2 $2.675 &nbsp;&middot;&nbsp; Z6 $2.886 &nbsp;(Z6/Z2 = 1.08, very flat for US too)<br>
-        ZA $3.639 &nbsp;&middot;&nbsp; ZD $3.969 &nbsp;&middot;&nbsp; ZE $4.491
-      </div>
-      <p>YoY: Zone 2 essentially flat (−1%), Zone E only +7% &mdash; so Sunrosa also skipped most of the Zone E +19% uplift. Four colors share the same prices. Fine if premium roses use a special rate card; odd if they should follow the house liner curve.</p>
+      <h3><span class="zonetag">LINERS</span> Rose Sunrosa barely steps up by zone</h3>
+      <p>Most liners climb steadily across Canada. Sunrosa stays almost flat &mdash; and it also skipped most of Zone E&rsquo;s big uplift. Four colors share these prices.</p>
+      <table class="mini-table">
+        <thead><tr><th>Zone</th><th>Sunrosa 26</th></tr></thead>
+        <tbody>
+          <tr><td>2</td><td>$2.675</td></tr>
+          <tr><td>6</td><td>$2.886 <span class="muted">(only 1.08&times; Zone 2)</span></td></tr>
+          <tr><td>A</td><td>$3.639</td></tr>
+          <tr><td>D</td><td>$3.969</td></tr>
+          <tr class="watch"><td>E</td><td>$4.491</td></tr>
+        </tbody>
+      </table>
+      <table class="mini-table">
+        <thead><tr><th>Check</th><th>Sunrosa</th><th>Typical liner</th></tr></thead>
+        <tbody>
+          <tr class="watch"><td>Zone E / Zone D</td><td class="fail-txt">1.13</td><td class="pass-txt">1.32</td></tr>
+          <tr class="watch"><td>YoY Zone 2</td><td>&minus;1%</td><td class="muted">near flat</td></tr>
+          <tr class="watch"><td>YoY Zone E</td><td class="fail-txt">+7%</td><td class="pass-txt">~+19% house uplift</td></tr>
+        </tbody>
+      </table>
+      <p>Fine if premium roses use a special rate card. Odd if they should follow the house liner curve.</p>
     </div>
     <div class="fix okfix">
-      <h3><span class="zonetag">RESOLVED</span> Lemon Grass, Jalapeno M vs La Bomba II, Cuphea &amp; Evolvulus 51s</h3>
-      <p>All four odd ratios existed identically in 2026 &mdash; deliberate carry-overs, not new errors:</p>
-      <div class="vals">
-        Lemon Grass 288 &nbsp;&nbsp;high both years (144/288 ratio = 1.41 in 2026 and 2027)<br>
-        Jalapeno M vs La Bomba II &nbsp;&nbsp;same gap in 2026 &mdash; M grouped with open-pollinated, La Bomba with hybrids<br>
-        Cuphea 51 &nbsp;&nbsp;$0.878 in 2026 &rarr; $0.877 in 2027<br>
-        Evolvulus 51 &nbsp;&nbsp;$0.853 in 2026 &rarr; $0.826 in 2027
-      </div>
-      <p>The "2024" in the Cuphea name is still a stale label worth cleaning.</p>
+      <h3><span class="zonetag">RESOLVED</span> Four odd ratios that already existed in 2026</h3>
+      <p>Same quirks last year &mdash; deliberate carry-overs, not new errors.</p>
+      <table class="mini-table">
+        <thead><tr><th>Item</th><th>What looked odd</th><th>2026</th></tr></thead>
+        <tbody>
+          <tr class="ok"><td>Lemon Grass 288</td><td>High vs its 144</td><td class="pass-txt">same ratio 1.41</td></tr>
+          <tr class="ok"><td>Jalapeno M vs La Bomba II</td><td>Big price gap</td><td class="pass-txt">same gap</td></tr>
+          <tr class="ok"><td>Cuphea 51</td><td>$0.877</td><td class="pass-txt">was $0.878</td></tr>
+          <tr class="ok"><td>Evolvulus 51</td><td>$0.826</td><td class="pass-txt">was $0.853</td></tr>
+        </tbody>
+      </table>
+      <p>Cuphea&rsquo;s name still says &ldquo;2024&rdquo; &mdash; stale label worth cleaning.</p>
     </div>
   </div>
 
