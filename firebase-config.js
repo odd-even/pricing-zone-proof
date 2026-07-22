@@ -1,22 +1,11 @@
-// Paste your Firebase web app config below (Project settings → Your apps → SDK setup).
-// Create project: https://console.firebase.google.com/
-// Then: Build → Realtime Database → Create database → start in test mode (or use the rules below).
-//
-// Rules (Realtime Database → Rules):
-// {
-//   "rules": {
-//     "checklist": {
-//       ".read": true,
-//       ".write": true
-//     }
-//   }
-// }
+// Firebase config for jf-pricing-checklist (Realtime Database team sync).
+// Public by design — security is database rules on /checklist.
 window.JF_FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBlJX8KT5tDvxqZQQU0tENCJCfn9ukVs_Y",
+  authDomain: "jf-pricing-checklist.firebaseapp.com",
+  databaseURL: "https://jf-pricing-checklist-default-rtdb.firebaseio.com",
+  projectId: "jf-pricing-checklist",
+  storageBucket: "jf-pricing-checklist.firebasestorage.app",
+  messagingSenderId: "624331122346",
+  appId: "1:624331122346:web:c8276f3e4ee53e682492d3"
 };
