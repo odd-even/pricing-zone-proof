@@ -45,6 +45,26 @@
   }
   .wrap { max-width: 1800px; margin: 0 auto; }
 
+  .app-tabs {
+    display: inline-flex; gap: 4px;
+    padding: 4px; margin-bottom: 22px;
+    background: var(--card); border: 1px solid var(--separator);
+    border-radius: 14px;
+  }
+  .app-tab {
+    font: inherit; font-size: 13px; font-weight: 700;
+    padding: 8px 16px; border-radius: 10px;
+    color: var(--text-secondary); text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  .app-tab:hover { color: var(--text); }
+  .app-tab.active {
+    background: var(--text); color: var(--bg);
+  }
+  @media (prefers-color-scheme: dark) {
+    .app-tab.active { background: #fff; color: #000; }
+  }
+
   h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 800; letter-spacing: -0.6px; line-height: 1.1; }
   .subtitle { color: var(--text-secondary); font-size: clamp(13px, 1.9vw, 16px); margin-top: 8px; line-height: 1.45; }
   header.page-head {
@@ -646,8 +666,12 @@
   }
 </style>
 </head>
-<body>
+<body data-page="proof">
 <div class="wrap">
+  <nav class="app-tabs" aria-label="Views">
+    <a class="app-tab" data-tab="proof" href="#">Proof</a>
+    <a class="app-tab" data-tab="checklist" href="#">Checklist</a>
+  </nav>
   <header class="page-head">
     <div class="page-head-text">
       <h1>2027 Pricing Zone Proof</h1>
@@ -1292,6 +1316,25 @@
 </div>
 
 <script>
+(function () {
+  var page = document.body.getAttribute("data-page") || "proof";
+  var file = decodeURIComponent((location.pathname.split("/").pop() || "").toLowerCase());
+  var isLocalFile = /proof dashboard\.html|pricing zone checklist\.html/.test(file);
+  var proofHref = isLocalFile ? "Proof Dashboard.html" : "./";
+  var checklistHref = isLocalFile ? "Pricing Zone Checklist.html" : "checklist.html";
+  var proof = document.querySelector(".app-tab[data-tab='proof']");
+  var checklist = document.querySelector(".app-tab[data-tab='checklist']");
+  if (proof) {
+    proof.href = proofHref;
+    proof.classList.toggle("active", page === "proof");
+    if (page === "proof") proof.setAttribute("aria-current", "page");
+  }
+  if (checklist) {
+    checklist.href = checklistHref;
+    checklist.classList.toggle("active", page === "checklist");
+    if (page === "checklist") checklist.setAttribute("aria-current", "page");
+  }
+})();
 (function () {
   var ZONES = [
     { id: "2", region: "US" }, { id: "3", region: "US" }, { id: "4", region: "US" },

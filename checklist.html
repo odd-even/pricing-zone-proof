@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing Zone Checklist</title>
+<style>
+  :root {
+    --bg: #f2f2f7;
+    --card: #ffffff;
+    --text: #1c1c1e;
+    --text-secondary: #8e8e93;
+    --separator: rgba(60, 60, 67, 0.12);
+    --accent: #007aff;
+    --accent-soft: rgba(0, 122, 255, 0.10);
+    --green: #34c759;
+    --usa: #007aff;
+    --canada: #ff3b30;
+    --c-red: #ff2a3b;
+    --c-orange: #fe4725;
+    --c-yellow: #ffc940;
+    --c-green: #04bb84;
+    --c-blue: #0894ff;
+    --c-purple: #8800ff;
+    --c-pink: #ff40b1;
+    --c-teal: #b55eff;
+    --c-gray: #8e8e93;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000000;
+      --card: #1c1c1e;
+      --text: #ffffff;
+      --text-secondary: #98989e;
+      --separator: rgba(84, 84, 88, 0.5);
+      --accent: #0a84ff;
+      --accent-soft: rgba(10, 132, 255, 0.16);
+      --green: #30d158;
+      --usa: #0a84ff;
+      --canada: #ff453a;
+      --c-red: #ff2a3b;
+      --c-orange: #fe4725;
+      --c-yellow: #ffc940;
+      --c-green: #04bb84;
+      --c-blue: #0894ff;
+      --c-purple: #8800ff;
+      --c-pink: #ff40b1;
+      --c-teal: #b55eff;
+      --c-gray: #98989e;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 40px 24px 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+
+  .app-tabs {
+    display: inline-flex; gap: 4px;
+    padding: 4px; margin-bottom: 22px;
+    background: var(--card); border: 1px solid var(--separator);
+    border-radius: 14px;
+  }
+  .app-tab {
+    font: inherit; font-size: 13px; font-weight: 700;
+    padding: 8px 16px; border-radius: 10px;
+    color: var(--text-secondary); text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  .app-tab:hover { color: var(--text); }
+  .app-tab.active {
+    background: var(--text); color: var(--bg);
+  }
+  @media (prefers-color-scheme: dark) {
+    .app-tab.active { background: #fff; color: #000; }
+  }
+
+  header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 8px; }
+  h1 { font-size: clamp(24px, 5vw, 34px); font-weight: 700; letter-spacing: 0.2px; }
+  .subtitle { color: var(--text-secondary); font-size: clamp(13px, 2.2vw, 15px); margin-top: 4px; }
+
+  .overall {
+    display: flex; align-items: center; gap: 14px;
+    margin: 20px 0 28px;
+  }
+  .overall-count {
+    font-size: 15px; font-weight: 600; color: var(--text-secondary);
+    min-width: 90px; text-align: right; font-variant-numeric: tabular-nums;
+  }
+  .bar {
+    flex: 1; height: 6px; border-radius: 3px;
+    background: var(--separator); overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; width: 0%;
+    background-image: linear-gradient(90deg, #ff3b30 0%, #ff9500 30%, #ffcc00 55%, #34c759 78%, #007aff 100%);
+    background-repeat: no-repeat;
+    border-radius: 3px;
+    transition: width 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    overflow: hidden;
+    overflow-x: auto;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  th, td { padding: 0; }
+
+  thead th {
+    padding: 16px clamp(2px, 1vw, 8px) 14px;
+    font-size: clamp(10px, 1.5vw, 12px);
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    text-align: center;
+    border-bottom: 1px solid var(--separator);
+    line-height: 1.45;
+    vertical-align: bottom;
+  }
+  thead th.task-col { text-align: left; padding-left: clamp(12px, 2.5vw, 20px); width: clamp(130px, 28vw, 270px); min-width: 120px; }
+  thead th.zone-head { min-width: 34px; }
+  thead th.progress-col { width: clamp(44px, 8vw, 74px); }
+
+  tbody tr { border-bottom: 1px solid var(--separator); transition: background 0.2s ease; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr.task-done { background: var(--accent-soft); }
+
+  .task-cell {
+    padding: 13px clamp(6px, 1.5vw, 12px) 13px clamp(10px, 2vw, 16px);
+    font-size: clamp(12px, 1.8vw, 15px);
+    font-weight: 550;
+    line-height: 1.35;
+    display: flex;
+    align-items: center;
+    gap: clamp(6px, 1.2vw, 10px);
+    /* Uniform row height: always tall enough for a two-line label. */
+    min-height: calc(2.7em + 26px);
+  }
+  .task-label { flex: 1; min-width: 0; overflow-wrap: break-word; cursor: text; text-wrap: balance; }
+  .label-edit {
+    width: 100%;
+    padding: 2px 6px;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    background: var(--card);
+    color: var(--text);
+    font: inherit;
+    outline: none;
+  }
+  .drag-handle {
+    flex-shrink: 0;
+    width: 20px;
+    color: var(--text-secondary);
+    opacity: 0.45;
+    font-size: 17px;
+    line-height: 18px;
+    text-align: center;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+    padding: 0;
+  }
+  .drag-handle:hover { opacity: 1; }
+  .drag-handle:active { cursor: grabbing; }
+  tbody tr.dragging { opacity: 0.45; background: var(--accent-soft); }
+  .group-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    background: var(--task-color);
+    cursor: pointer;
+    border: 0;
+    padding: 0;
+    transition: transform 0.15s ease;
+  }
+  .group-dot:hover { transform: scale(1.35); }
+  tbody tr[data-task] .task-cell { box-shadow: inset 3px 0 0 var(--task-color); }
+  tbody tr[data-task] .ck:hover { border-color: var(--task-color); }
+  tbody tr[data-task] .ck:checked { background: var(--task-color); border-color: var(--task-color); }
+
+  .color-pop {
+    position: absolute;
+    display: flex;
+    gap: 7px;
+    padding: 9px 11px;
+    background: var(--card);
+    border: 1px solid var(--separator);
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+    z-index: 50;
+  }
+  .color-pop button {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.12s ease;
+  }
+  .color-pop button:hover { transform: scale(1.25); }
+  .color-pop button.current { outline: 2px solid var(--text); outline-offset: 2px; }
+  tr.task-done .task-cell { color: var(--text-secondary); }
+  tr.task-done .task-label {
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+  }
+  .zone-word { display: block; font-size: clamp(7px, 1.1vw, 9px); font-weight: 600; color: var(--text-secondary); letter-spacing: 1px; margin-bottom: 2px; }
+  .zone-label { display: block; font-size: clamp(17px, 3.4vw, 30px); font-weight: 800; color: var(--text); line-height: 1; letter-spacing: -0.5px; }
+  .zone-region { display: block; font-size: clamp(7px, 1.1vw, 9px); color: var(--text-secondary); margin-top: 4px; letter-spacing: 0.5px; }
+  .zone-label.usa, .zone-label.canada { color: var(--text); }
+  .card { position: relative; }
+  .region-box {
+    position: absolute;
+    border: 1.5px solid var(--separator);
+    border-radius: 14px;
+    pointer-events: none;
+  }
+
+  td.check-cell { text-align: center; vertical-align: middle; }
+
+  .ck {
+    -webkit-appearance: none;
+    appearance: none;
+    width: clamp(18px, 3vw, 24px); height: clamp(18px, 3vw, 24px);
+    border: 1.6px solid var(--text-secondary);
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    vertical-align: middle;
+    transition: all 0.16s ease;
+    background: transparent;
+    opacity: 0.75;
+  }
+  .ck:hover { border-color: var(--accent); opacity: 1; transform: scale(1.08); }
+  .ck:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+    opacity: 1;
+  }
+  .ck:checked::after {
+    content: "";
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 25%; height: 46%;
+    border: solid var(--check-mark, #fff);
+    border-width: 0 2px 2px 0;
+    transform: translate(-50%, -58%) rotate(45deg);
+  }
+  .ck:active { transform: scale(0.92); }
+
+  .row-progress {
+    font-size: clamp(11px, 1.6vw, 13px); font-weight: 600;
+    color: var(--text-secondary);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    padding-right: clamp(6px, 1.5vw, 14px);
+  }
+  .add-task {
+    display: flex;
+    gap: 8px;
+    margin: 14px 0 0;
+  }
+  .add-task input {
+    flex: 1;
+    min-width: 0;
+    height: 38px;
+    padding: 0 13px;
+    border: 1px solid var(--separator);
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--text);
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+  }
+  .add-task input:focus { border-color: var(--accent); }
+  .add-task button {
+    height: 38px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 650;
+    cursor: pointer;
+  }
+  .prog-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+    width: 100%;
+  }
+  .prog-count { min-width: 36px; text-align: right; margin-left: clamp(8px, 2vw, 18px); }
+  .row-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    flex-shrink: 0;
+  }
+  .remove-task {
+    width: 20px;
+    height: 16px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 16px;
+    text-align: center;
+    opacity: 0.5;
+    cursor: pointer;
+  }
+  .remove-task:hover { opacity: 1; color: var(--c-red); }
+
+  footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 24px;
+  }
+  .hint { font-size: 13px; color: var(--text-secondary); }
+  .reset {
+    font-family: inherit;
+    font-size: 14px; font-weight: 600;
+    color: var(--accent);
+    background: none; border: none; cursor: pointer;
+    padding: 8px 14px; border-radius: 10px;
+    transition: background 0.15s ease;
+  }
+  .reset:hover { background: var(--accent-soft); }
+
+  @media (max-width: 720px) {
+    body { padding: 20px 10px 60px; }
+    .zone-region { display: none; }
+    .overall-count { min-width: 70px; font-size: 13px; }
+  }
+
+  @media (max-width: 520px) {
+    body { padding: 14px 6px 50px; }
+    .card { border-radius: 12px; }
+    thead th.task-col { width: 92px; min-width: 84px; }
+    thead th.zone-head { min-width: 26px; }
+    thead th { padding-left: 1px; padding-right: 1px; }
+    .task-cell { padding-left: 8px; padding-right: 4px; gap: 5px; }
+    .group-dot { width: 7px; height: 7px; }
+    .ck { width: 17px; height: 17px; }
+    .zone-word { display: none; }
+    .prog-count { display: none; }
+    .row-progress { padding-right: 2px; }
+    thead th.progress-col { display: none; }
+  }
+</style>
+</head>
+<body data-page="checklist">
+<div class="wrap">
+  <nav class="app-tabs" aria-label="Views">
+    <a class="app-tab" data-tab="proof" href="#">Proof</a>
+    <a class="app-tab" data-tab="checklist" href="#">Checklist</a>
+  </nav>
+  <header>
+    <div>
+      <h1>Pricing Zones</h1>
+      <p class="subtitle">Track your changes across every zone</p>
+    </div>
+  </header>
+
+  <div class="overall">
+    <div class="bar"><div class="bar-fill" id="overallBar"></div></div>
+    <div class="overall-count" id="overallCount">0 of 110</div>
+  </div>
+
+  <div class="card">
+    <table id="grid">
+      <thead>
+        <tr id="zoneHeaders"></tr>
+      </thead>
+      <tbody id="gridBody"></tbody>
+    </table>
+  </div>
+
+  <form class="add-task" id="addTaskForm">
+    <input id="newTaskInput" type="text" maxlength="120" placeholder="Add your own checklist item…" autocomplete="off">
+    <button type="submit">Add</button>
+  </form>
+
+  <footer>
+    <p class="hint">Progress saves automatically in this browser.</p>
+    <div>
+      <button class="reset" id="restoreBtn" style="display:none">Restore Removed</button>
+      <button class="reset" id="resetBtn">Reset All</button>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var page = document.body.getAttribute("data-page") || "checklist";
+  var file = decodeURIComponent((location.pathname.split("/").pop() || "").toLowerCase());
+  var isLocalFile = /proof dashboard\.html|pricing zone checklist\.html/.test(file);
+  var proofHref = isLocalFile ? "Proof Dashboard.html" : "./";
+  var checklistHref = isLocalFile ? "Pricing Zone Checklist.html" : "checklist.html";
+  var proof = document.querySelector(".app-tab[data-tab='proof']");
+  var checklist = document.querySelector(".app-tab[data-tab='checklist']");
+  if (proof) {
+    proof.href = proofHref;
+    proof.classList.toggle("active", page === "proof");
+    if (page === "proof") proof.setAttribute("aria-current", "page");
+  }
+  if (checklist) {
+    checklist.href = checklistHref;
+    checklist.classList.toggle("active", page === "checklist");
+    if (page === "checklist") checklist.setAttribute("aria-current", "page");
+  }
+})();
+(function () {
+  var STORAGE_KEY = "pricingZoneChecklist.v1";
+  var CUSTOM_TASKS_KEY = "pricingZoneChecklist.customTasks.v1";
+
+  var BASE_TASKS = [
+    { id: "lastPage", label: "Delete last page elements", group: "delete" },
+    { id: "mainTable", label: "Delete main pricing table", group: "delete" },
+    { id: "offsetCell", label: "Remove offset cell on page 15", group: "delete" },
+    { id: "comboData", label: "Delete combo data", group: "delete" },
+    { id: "copyZone2LastPage", label: "Copy Zone 2 last page elements", group: "copy" },
+    { id: "copyZone2MainTable", label: "Copy Zone 2 main pricing table", group: "copy" },
+    { id: "deletePricingContents", label: "Delete pricing contents of table", group: "copy" },
+    { id: "replacePricing", label: "Replace pricing table with correct pricing", group: "replace" },
+    { id: "replaceComboPricing", label: "Replace combo pricing with correct data", group: "replace" },
+    { id: "checkMainPricing", label: "Check correct main pricing data", group: "check" },
+    { id: "checkComboData", label: "Check combo data", group: "check" }
+  ];
+
+  function loadCustomTasks() {
+    try {
+      var raw = localStorage.getItem(CUSTOM_TASKS_KEY);
+      var saved = raw ? JSON.parse(raw) : [];
+      return Array.isArray(saved) ? saved : [];
+    } catch (e) { return []; }
+  }
+
+  function saveCustomTasks() {
+    try { localStorage.setItem(CUSTOM_TASKS_KEY, JSON.stringify(customTasks)); } catch (e) {}
+  }
+
+  var customTasks = loadCustomTasks();
+  var REMOVED_TASKS_KEY = "pricingZoneChecklist.removedTasks.v1";
+
+  function loadRemovedTasks() {
+    try {
+      var raw = localStorage.getItem(REMOVED_TASKS_KEY);
+      var saved = raw ? JSON.parse(raw) : [];
+      return Array.isArray(saved) ? saved : [];
+    } catch (e) { return []; }
+  }
+
+  function saveRemovedTasks() {
+    try { localStorage.setItem(REMOVED_TASKS_KEY, JSON.stringify(removedTaskIds)); } catch (e) {}
+  }
+
+  var removedTaskIds = loadRemovedTasks();
+
+  var LABEL_OVERRIDES_KEY = "pricingZoneChecklist.labelOverrides.v1";
+
+  function loadLabelOverrides() {
+    try {
+      var raw = localStorage.getItem(LABEL_OVERRIDES_KEY);
+      var saved = raw ? JSON.parse(raw) : {};
+      return saved && typeof saved === "object" ? saved : {};
+    } catch (e) { return {}; }
+  }
+
+  function saveLabelOverrides() {
+    try { localStorage.setItem(LABEL_OVERRIDES_KEY, JSON.stringify(labelOverrides)); } catch (e) {}
+  }
+
+  var labelOverrides = loadLabelOverrides();
+
+  var COLOR_OVERRIDES_KEY = "pricingZoneChecklist.colorOverrides.v1";
+  var COLOR_NAMES = ["red", "orange", "yellow", "green", "blue", "purple", "pink", "teal", "gray"];
+  var GROUP_DEFAULT_COLOR = { "delete": "red", copy: "orange", replace: "green", check: "blue", custom: "purple" };
+
+  function loadColorOverrides() {
+    try {
+      var raw = localStorage.getItem(COLOR_OVERRIDES_KEY);
+      var saved = raw ? JSON.parse(raw) : {};
+      return saved && typeof saved === "object" ? saved : {};
+    } catch (e) { return {}; }
+  }
+
+  function saveColorOverrides() {
+    try { localStorage.setItem(COLOR_OVERRIDES_KEY, JSON.stringify(colorOverrides)); } catch (e) {}
+  }
+
+  var colorOverrides = loadColorOverrides();
+
+  function colorNameForTask(task) {
+    return colorOverrides[task.id] || GROUP_DEFAULT_COLOR[task.group] || "gray";
+  }
+
+  var TASK_ORDER_KEY = "pricingZoneChecklist.taskOrder.v1";
+
+  function loadTaskOrder() {
+    try {
+      var raw = localStorage.getItem(TASK_ORDER_KEY);
+      var saved = raw ? JSON.parse(raw) : [];
+      return Array.isArray(saved) ? saved : [];
+    } catch (e) { return []; }
+  }
+
+  function saveTaskOrder() {
+    try {
+      localStorage.setItem(TASK_ORDER_KEY, JSON.stringify(TASKS.map(function (task) { return task.id; })));
+    } catch (e) {}
+  }
+
+  function buildTaskList() {
+    var all = BASE_TASKS.concat(customTasks).filter(function (task) {
+      return removedTaskIds.indexOf(task.id) === -1;
+    });
+    all.forEach(function (task) {
+      if (labelOverrides[task.id]) task.label = labelOverrides[task.id];
+    });
+    var order = loadTaskOrder();
+    if (order.length === 0) return all;
+    var byId = {};
+    all.forEach(function (task) { byId[task.id] = task; });
+    var sorted = [];
+    order.forEach(function (id) {
+      if (byId[id]) {
+        sorted.push(byId[id]);
+        delete byId[id];
+      }
+    });
+    // New tasks not in the saved order keep their default position at the end.
+    all.forEach(function (task) {
+      if (byId[task.id]) sorted.push(task);
+    });
+    return sorted;
+  }
+
+  var TASKS = buildTaskList();
+
+  var ZONES = [
+    { id: "2", name: "Zone 2", region: "USA" },
+    { id: "3", name: "Zone 3", region: "USA" },
+    { id: "4", name: "Zone 4", region: "USA" },
+    { id: "5", name: "Zone 5", region: "USA" },
+    { id: "6", name: "Zone 6", region: "USA" },
+    { id: "A", name: "Zone A", region: "Canada" },
+    { id: "B", name: "Zone B", region: "Canada" },
+    { id: "C", name: "Zone C", region: "Canada" },
+    { id: "D", name: "Zone D", region: "Canada" },
+    { id: "E", name: "Zone E", region: "Canada" }
+  ];
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+  function saveState(state) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  var state = loadState();
+
+  function key(zoneId, taskId) { return zoneId + ":" + taskId; }
+
+  var tbody = document.getElementById("gridBody");
+  var zoneHeaders = document.getElementById("zoneHeaders");
+  var taskHead = document.createElement("th");
+  taskHead.className = "task-col";
+  taskHead.textContent = "Changes";
+  zoneHeaders.appendChild(taskHead);
+
+  ZONES.forEach(function (zone) {
+    var th = document.createElement("th");
+    th.className = "zone-head";
+    th.dataset.region = zone.region;
+    var zoneWord = document.createElement("span");
+    zoneWord.className = "zone-word";
+    zoneWord.textContent = "ZONE";
+    var zoneLabel = document.createElement("span");
+    zoneLabel.className = "zone-label " + zone.region.toLowerCase();
+    zoneLabel.textContent = zone.id;
+    var regionLabel = document.createElement("span");
+    regionLabel.className = "zone-region";
+    regionLabel.textContent = zone.region === "USA" ? "US" : "CA";
+    th.appendChild(zoneWord);
+    th.appendChild(zoneLabel);
+    th.appendChild(regionLabel);
+    zoneHeaders.appendChild(th);
+  });
+  var doneHead = document.createElement("th");
+  doneHead.className = "progress-col";
+  doneHead.textContent = "Done";
+  zoneHeaders.appendChild(doneHead);
+
+  function renderTasks() {
+    tbody.innerHTML = "";
+    TASKS.forEach(function (task) {
+    var tr = document.createElement("tr");
+    tr.dataset.task = task.id;
+    var colorName = colorNameForTask(task);
+    tr.style.setProperty("--task-color", "var(--c-" + colorName + ")");
+    // Mindaro is too light for a white checkmark.
+    tr.style.setProperty("--check-mark", colorName === "yellow" ? "rgba(0,0,0,0.75)" : "#fff");
+
+    var taskTd = document.createElement("td");
+    taskTd.className = "task-cell";
+    var rowControls = document.createElement("span");
+    rowControls.className = "row-controls";
+    var removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "remove-task";
+    removeBtn.title = "Remove “" + task.label + "”";
+    removeBtn.setAttribute("aria-label", "Remove " + task.label);
+    removeBtn.textContent = "×";
+    removeBtn.addEventListener("click", function () {
+      if (!confirm("Remove “" + task.label + "” and its checkmarks?")) return;
+      if (task.custom) {
+        customTasks = customTasks.filter(function (item) { return item.id !== task.id; });
+        saveCustomTasks();
+      } else {
+        removedTaskIds.push(task.id);
+        saveRemovedTasks();
+      }
+      TASKS = TASKS.filter(function (item) { return item.id !== task.id; });
+      ZONES.forEach(function (zone) { delete state[key(zone.id, task.id)]; });
+      saveTaskOrder();
+      saveState(state);
+      renderTasks();
+      refresh();
+    });
+    var dragHandle = document.createElement("span");
+    dragHandle.className = "drag-handle";
+    dragHandle.title = "Drag to reorder";
+    dragHandle.textContent = "⠿";
+    dragHandle.addEventListener("mousedown", function () { tr.draggable = true; });
+    dragHandle.addEventListener("touchstart", function () { tr.draggable = true; }, { passive: true });
+    rowControls.appendChild(removeBtn);
+    rowControls.appendChild(dragHandle);
+    var groupDot = document.createElement("button");
+    groupDot.type = "button";
+    groupDot.className = "group-dot";
+    groupDot.title = "Click to change color";
+    groupDot.addEventListener("click", function (event) {
+      event.stopPropagation();
+      openColorPicker(task, groupDot);
+    });
+    var taskLabel = document.createElement("span");
+    taskLabel.className = "task-label";
+    taskLabel.textContent = task.label;
+    taskLabel.title = "Double-click to edit";
+    taskLabel.addEventListener("dblclick", function () {
+      startLabelEdit(task, taskLabel);
+    });
+    taskTd.appendChild(groupDot);
+    taskTd.appendChild(taskLabel);
+    tr.appendChild(taskTd);
+
+    ZONES.forEach(function (zone) {
+      var td = document.createElement("td");
+      td.className = "check-cell";
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.className = "ck";
+      cb.checked = !!state[key(zone.id, task.id)];
+      cb.title = zone.name + " — " + task.label;
+      cb.addEventListener("change", function () {
+        state[key(zone.id, task.id)] = cb.checked;
+        saveState(state);
+        refresh();
+      });
+      td.appendChild(cb);
+      tr.appendChild(td);
+    });
+
+    var progTd = document.createElement("td");
+    progTd.className = "row-progress";
+    var progWrap = document.createElement("span");
+    progWrap.className = "prog-wrap";
+    var progCount = document.createElement("span");
+    progCount.className = "prog-count";
+    progCount.dataset.progressFor = task.id;
+    progWrap.appendChild(progCount);
+    progWrap.appendChild(rowControls);
+    progTd.appendChild(progWrap);
+    tr.appendChild(progTd);
+
+    tr.addEventListener("dragstart", function (event) {
+      draggedRow = tr;
+      tr.classList.add("dragging");
+      event.dataTransfer.effectAllowed = "move";
+      try { event.dataTransfer.setData("text/plain", task.id); } catch (eDT) {}
+    });
+    tr.addEventListener("dragend", function () {
+      tr.classList.remove("dragging");
+      tr.draggable = false;
+      draggedRow = null;
+      commitRowOrder();
+    });
+
+    tbody.appendChild(tr);
+    });
+  }
+
+  var colorPop = null;
+
+  function closeColorPicker() {
+    if (colorPop) {
+      colorPop.remove();
+      colorPop = null;
+    }
+  }
+
+  function openColorPicker(task, anchor) {
+    closeColorPicker();
+    colorPop = document.createElement("div");
+    colorPop.className = "color-pop";
+    var current = colorNameForTask(task);
+    COLOR_NAMES.forEach(function (name) {
+      var swatch = document.createElement("button");
+      swatch.type = "button";
+      swatch.title = name.charAt(0).toUpperCase() + name.slice(1);
+      swatch.style.background = "var(--c-" + name + ")";
+      if (name === current) swatch.className = "current";
+      swatch.addEventListener("click", function (event) {
+        event.stopPropagation();
+        colorOverrides[task.id] = name;
+        saveColorOverrides();
+        closeColorPicker();
+        renderTasks();
+        refresh();
+      });
+      colorPop.appendChild(swatch);
+    });
+    document.body.appendChild(colorPop);
+    var rect = anchor.getBoundingClientRect();
+    var popRect = colorPop.getBoundingClientRect();
+    var left = rect.left + window.scrollX - 6;
+    if (left + popRect.width > window.scrollX + document.documentElement.clientWidth - 8) {
+      left = window.scrollX + document.documentElement.clientWidth - popRect.width - 8;
+    }
+    if (left < window.scrollX + 8) left = window.scrollX + 8;
+    colorPop.style.left = left + "px";
+    colorPop.style.top = (rect.bottom + window.scrollY + 7) + "px";
+  }
+
+  document.addEventListener("click", function (event) {
+    if (colorPop && !colorPop.contains(event.target)) closeColorPicker();
+  });
+  window.addEventListener("resize", closeColorPicker);
+
+  function startLabelEdit(task, labelEl) {
+    if (labelEl.querySelector("input")) return;
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = "label-edit";
+    input.maxLength = 120;
+    input.value = task.label;
+    labelEl.textContent = "";
+    labelEl.appendChild(input);
+    input.focus();
+    input.select();
+
+    var finished = false;
+    function commit(save) {
+      if (finished) return;
+      finished = true;
+      var next = input.value.replace(/^\s+|\s+$/g, "");
+      if (save && next && next !== task.label) {
+        task.label = next;
+        if (task.custom) {
+          customTasks.forEach(function (item) {
+            if (item.id === task.id) item.label = next;
+          });
+          saveCustomTasks();
+        } else {
+          labelOverrides[task.id] = next;
+          saveLabelOverrides();
+        }
+      }
+      renderTasks();
+      refresh();
+    }
+
+    input.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") commit(true);
+      else if (event.key === "Escape") commit(false);
+    });
+    input.addEventListener("blur", function () { commit(true); });
+  }
+
+  var draggedRow = null;
+
+  tbody.addEventListener("dragover", function (event) {
+    if (!draggedRow) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+    var targetRow = event.target && event.target.closest ? event.target.closest("tr") : null;
+    if (!targetRow || targetRow === draggedRow || targetRow.parentNode !== tbody) return;
+    var rect = targetRow.getBoundingClientRect();
+    var insertAfter = event.clientY > rect.top + rect.height / 2;
+    tbody.insertBefore(draggedRow, insertAfter ? targetRow.nextSibling : targetRow);
+  });
+
+  tbody.addEventListener("drop", function (event) {
+    if (draggedRow) event.preventDefault();
+  });
+
+  function commitRowOrder() {
+    var byId = {};
+    TASKS.forEach(function (task) { byId[task.id] = task; });
+    var newOrder = [];
+    tbody.querySelectorAll("tr[data-task]").forEach(function (row) {
+      var task = byId[row.dataset.task];
+      if (task) newOrder.push(task);
+    });
+    if (newOrder.length === TASKS.length) {
+      TASKS = newOrder;
+      saveTaskOrder();
+    }
+    refresh();
+  }
+
+  renderTasks();
+
+  var overallBar = document.getElementById("overallBar");
+  var overallCount = document.getElementById("overallCount");
+
+  function refresh() {
+    var total = TASKS.length * ZONES.length;
+    var totalDone = 0;
+    TASKS.forEach(function (task) {
+      var done = 0;
+      ZONES.forEach(function (zone) {
+        if (state[key(zone.id, task.id)]) done++;
+      });
+      totalDone += done;
+      var row = tbody.querySelector('tr[data-task="' + task.id + '"]');
+      var prog = tbody.querySelector('[data-progress-for="' + task.id + '"]');
+      if (prog) {
+        prog.textContent = done + "/" + ZONES.length;
+        prog.classList.toggle("complete", done === ZONES.length);
+      }
+      if (row) row.classList.toggle("task-done", done === ZONES.length);
+    });
+    var pct = total ? (totalDone / total) * 100 : 0;
+    overallBar.style.width = pct + "%";
+    // Keep the gradient spanning the full track so colors reveal as the bar grows.
+    overallBar.style.backgroundSize = pct > 0 ? (10000 / pct) + "% 100%" : "100% 100%";
+    overallCount.textContent = totalDone + " of " + total;
+    if (typeof updateRestoreButton === "function") updateRestoreButton();
+    positionRegionBoxes();
+  }
+
+  var regionBoxes = {};
+  ["USA", "Canada"].forEach(function (region) {
+    var box = document.createElement("div");
+    box.className = "region-box";
+    document.querySelector(".card").appendChild(box);
+    regionBoxes[region] = box;
+  });
+
+  function positionRegionBoxes() {
+    var card = document.querySelector(".card");
+    var cardRect = card.getBoundingClientRect();
+    var tableRect = document.getElementById("grid").getBoundingClientRect();
+    var inset = 8;
+    Object.keys(regionBoxes).forEach(function (region) {
+      var ths = zoneHeaders.querySelectorAll('th[data-region="' + region + '"]');
+      var box = regionBoxes[region];
+      if (!ths.length) { box.style.display = "none"; return; }
+      var first = ths[0].getBoundingClientRect();
+      var last = ths[ths.length - 1].getBoundingClientRect();
+      box.style.display = "block";
+      box.style.left = (first.left - cardRect.left + 4) + "px";
+      box.style.width = (last.right - first.left - 8) + "px";
+      box.style.top = (tableRect.top - cardRect.top + inset) + "px";
+      box.style.height = (tableRect.height - inset * 2) + "px";
+    });
+  }
+
+  window.addEventListener("resize", positionRegionBoxes);
+
+  document.getElementById("addTaskForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    var input = document.getElementById("newTaskInput");
+    var label = input.value.replace(/^\s+|\s+$/g, "");
+    if (!label) {
+      input.focus();
+      return;
+    }
+    var task = {
+      id: "custom_" + Date.now() + "_" + Math.floor(Math.random() * 10000),
+      label: label,
+      group: "custom",
+      custom: true
+    };
+    customTasks.push(task);
+    TASKS.push(task);
+    saveCustomTasks();
+    saveTaskOrder();
+    input.value = "";
+    renderTasks();
+    refresh();
+    input.focus();
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    if (!confirm("Clear all checkboxes?")) return;
+    state = {};
+    saveState(state);
+    tbody.querySelectorAll(".ck").forEach(function (cb) { cb.checked = false; });
+    refresh();
+  });
+
+  var restoreBtn = document.getElementById("restoreBtn");
+
+  function updateRestoreButton() {
+    restoreBtn.style.display = removedTaskIds.length > 0 ? "" : "none";
+  }
+
+  restoreBtn.addEventListener("click", function () {
+    if (!confirm("Bring back all removed built-in tasks?")) return;
+    removedTaskIds = [];
+    saveRemovedTasks();
+    TASKS = buildTaskList();
+    saveTaskOrder();
+    renderTasks();
+    refresh();
+  });
+
+  refresh();
+})();
+</script>
+</body>
+</html>
