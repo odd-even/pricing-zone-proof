@@ -82,15 +82,9 @@
     margin: 28px 0 14px;
   }
   .section-head:first-of-type { margin-top: 22px; }
-  .card.section-wrap { margin-bottom: 22px; }
-  .card.section-wrap > .fixes {
-    margin: 0; padding: 16px; gap: 12px;
-  }
-  .card.section-wrap > .method-intro {
-    padding: 12px 20px 0; color: var(--text-secondary); font-size: 13px; line-height: 1.5;
-  }
-  .card.section-wrap > .method-grid {
-    padding: 14px 16px 16px; margin: 0;
+  .section-intro {
+    color: var(--text-secondary); font-size: 13px; line-height: 1.5;
+    margin: -6px 0 16px;
   }
   .badge {
     font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
@@ -373,33 +367,30 @@
     </div>
   </div>
 
-  <div class="card section-wrap">
-    <div class="card-head">
-      <h2>Edits needed</h2>
-      <span class="section-count" data-count-for="edits"></span>
+  <div class="section-head">
+    <h2>Edits needed</h2>
+    <span class="section-count" data-count-for="edits"></span>
+  </div>
+  <div class="fixes" data-review-group="edits">
+    <div class="fix okfix">
+      <h3><span class="zonetag">RESOLVED</span> Zones C&middot;D&middot;E freight boxes &mdash; not published, same as 2026</h3>
+      <p>The 2026 catalogs for C, D and E also had no box-shipment rates on the Shipping Information page (no Box Shipments section, zero dollar amounts) &mdash; the omission is the established design for those zones, not a missed fill. The ws&nbsp;2027 sheet does list C/D/E rates ($72/$37/$18, $79/$33/$22, $120/$90/$50) if they&rsquo;re ever wanted in the catalog.</p>
     </div>
-    <div class="fixes" data-review-group="edits">
-      <div class="fix okfix">
-        <h3><span class="zonetag">RESOLVED</span> Zones C&middot;D&middot;E freight boxes &mdash; not published, same as 2026</h3>
-        <p>The 2026 catalogs for C, D and E also had no box-shipment rates on the Shipping Information page (no Box Shipments section, zero dollar amounts) &mdash; the omission is the established design for those zones, not a missed fill. The ws&nbsp;2027 sheet does list C/D/E rates ($72/$37/$18, $79/$33/$22, $120/$90/$50) if they&rsquo;re ever wanted in the catalog.</p>
-      </div>
-      <div class="fix warnfix">
-        <h3><span class="zonetag">ZONES 5&middot;6</span> Rack minimums &mdash; PDF matches 2026, ws 2027 sheet disagrees</h3>
-        <p>Zone 5 PDF says <b>2 racks</b> and Zone 6 says <b>3 racks</b> &mdash; <b>identical to the 2026 catalogs</b>. The ws&nbsp;2027 freight sheet says the opposite (3 for Zone&nbsp;5, 2 for Zone&nbsp;6). So either the sheet has them swapped, or the minimums really changed and the PDFs are carrying stale 2026 text. Ask which source is right; box charges match the sheet everywhere.</p>
-      </div>
-      <div class="fix okfix">
-        <h3><span class="zonetag">RESOLVED</span> Combo accessories = 2026 exactly, including the $69.98 Bowl</h3>
-        <p>Every accessory price in every zone is identical to the 2026 catalogs &mdash; "repeat last year's pricing" was executed correctly. The 12&quot; Bowl's flat $69.98 across zones 4/5/6 was in the 2026 books too. Full table in the Combo accessories section below.</p>
-      </div>
+    <div class="fix warnfix">
+      <h3><span class="zonetag">ZONES 5&middot;6</span> Rack minimums &mdash; PDF matches 2026, ws 2027 sheet disagrees</h3>
+      <p>Zone 5 PDF says <b>2 racks</b> and Zone 6 says <b>3 racks</b> &mdash; <b>identical to the 2026 catalogs</b>. The ws&nbsp;2027 freight sheet says the opposite (3 for Zone&nbsp;5, 2 for Zone&nbsp;6). So either the sheet has them swapped, or the minimums really changed and the PDFs are carrying stale 2026 text. Ask which source is right; box charges match the sheet everywhere.</p>
+    </div>
+    <div class="fix okfix">
+      <h3><span class="zonetag">RESOLVED</span> Combo accessories = 2026 exactly, including the $69.98 Bowl</h3>
+      <p>Every accessory price in every zone is identical to the 2026 catalogs &mdash; "repeat last year's pricing" was executed correctly. The 12&quot; Bowl's flat $69.98 across zones 4/5/6 was in the 2026 books too. Full table in the Combo accessories section below.</p>
     </div>
   </div>
 
-  <div class="card section-wrap">
-    <div class="card-head">
-      <h2>Source data review (Excel R3)</h2>
-      <span class="section-count" data-count-for="data"></span>
-    </div>
-    <div class="fixes" data-review-group="data">
+  <div class="section-head">
+    <h2>Source data review (Excel R3)</h2>
+    <span class="section-count" data-count-for="data"></span>
+  </div>
+  <div class="fixes" data-review-group="data">
     <div class="fix">
       <h3><span class="zonetag">ALL ZONES</span> Erysimum Brightside Magenta Glow = $0.10</h3>
       <p>Perennials, 51-strip &mdash; the leading "1" got dropped:</p>
@@ -472,15 +463,13 @@
       </div>
       <p>The 144/288 ratio went from a normal <b>1.76</b> to <b>2.40</b> &mdash; the largest size-ratio shift of any matched vegetable. Either the 144 is too high now, or the bulk trays didn't get the same reprice.</p>
     </div>
-    </div>
   </div>
 
-  <div class="card section-wrap">
-    <div class="card-head">
-      <h2>Erysimum-class suspects (single-item anomalies)</h2>
-      <span class="section-count" data-count-for="suspects"></span>
-    </div>
-    <div class="fixes" data-review-group="suspects">
+  <div class="section-head">
+    <h2>Erysimum-class suspects (single-item anomalies)</h2>
+    <span class="section-count" data-count-for="suspects"></span>
+  </div>
+  <div class="fixes" data-review-group="suspects">
     <div class="fix">
       <h3><span class="zonetag">ALL ZONES</span> Lobelia Premium Masterpiece &mdash; 26-strip is 2.3&times; off its own curve</h3>
       <p>Masterpiece Blue with Eye:</p>
@@ -527,7 +516,6 @@
         Evolvulus 51 &nbsp;&nbsp;$0.853 in 2026 &rarr; $0.826 in 2027
       </div>
       <p>The "2024" in the Cuphea name is still a stale label worth cleaning.</p>
-    </div>
     </div>
   </div>
 
@@ -662,12 +650,11 @@
     </table>
   </div>
 
-  <div class="card section-wrap">
-    <div class="card-head">
-      <h2>How this proof was run</h2>
-    </div>
-    <p class="method-intro">Every check behind the findings above &mdash; what was measured, against what, and what it surfaced. Red / amber / green dots mark whether the check produced a finding on this dashboard.</p>
-    <div class="method-grid">
+  <div class="section-head">
+    <h2>How this proof was run</h2>
+  </div>
+  <p class="section-intro">Every check behind the findings above &mdash; what was measured, against what, and what it surfaced. Red / amber / green dots mark whether the check produced a finding on this dashboard.</p>
+  <div class="method-grid">
 
     <div class="method-card pdf">
       <div class="tag">PDF proof &middot; finished catalogs</div>
@@ -765,7 +752,6 @@
       </ul>
     </div>
 
-  </div>
   </div>
 
   <footer>
