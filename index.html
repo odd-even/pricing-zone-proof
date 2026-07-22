@@ -852,6 +852,13 @@
   var KEY = "proofDashboardReviews.v1";
   var state = {};
   try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+  Object.keys(state).forEach(function (k) {
+    if (k.indexOf("suspects:") === 0) {
+      var nk = "data:" + k.slice(9);
+      if (!state[nk]) state[nk] = state[k];
+      delete state[k];
+    }
+  });
   function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
 
   function slug(text) {
